@@ -347,6 +347,7 @@ slots:
     slot_uri: kozahub_metadata_schema:transform_version
     owner: ReleaseMetadata
     domain_of:
+    - Release
     - ReleaseMetadata
     range: string
   biolink_version:
@@ -357,6 +358,7 @@ slots:
     slot_uri: kozahub_metadata_schema:biolink_version
     owner: ReleaseMetadata
     domain_of:
+    - Release
     - ReleaseMetadata
     range: string
   release_version:
@@ -380,6 +382,7 @@ slots:
     slot_uri: kozahub_metadata_schema:build_version
     owner: ReleaseMetadata
     domain_of:
+    - Release
     - ReleaseMetadata
     range: string
   generated_at:
@@ -392,6 +395,7 @@ slots:
     slot_uri: schema:dateCreated
     owner: ReleaseMetadata
     domain_of:
+    - Release
     - ReleaseMetadata
     range: datetime
   sources:
@@ -408,6 +412,7 @@ slots:
     slot_uri: schema:isBasedOn
     owner: ReleaseMetadata
     domain_of:
+    - Release
     - ReleaseMetadata
     range: SourceVersion
     multivalued: true
@@ -464,6 +469,7 @@ slots:
     slot_uri: schema:distribution
     owner: ReleaseMetadata
     domain_of:
+    - Release
     - ReleaseMetadata
     range: Artifact
     multivalued: true
@@ -477,6 +483,7 @@ slots:
     slot_uri: kozahub_metadata_schema:tools
     owner: ReleaseMetadata
     domain_of:
+    - Release
     - ReleaseMetadata
     range: ToolVersions
     inlined: true
@@ -492,6 +499,7 @@ slots:
     identifier: true
     owner: SourceVersion
     domain_of:
+    - Release
     - SourceVersion
     range: uriorcurie
     required: true
@@ -505,6 +513,7 @@ slots:
     slot_uri: schema:name
     owner: SourceVersion
     domain_of:
+    - Release
     - SourceVersion
     range: string
   urls:
@@ -519,6 +528,7 @@ slots:
     slot_uri: schema:url
     owner: SourceVersion
     domain_of:
+    - Release
     - SourceVersion
     range: uri
     multivalued: true
@@ -532,6 +542,7 @@ slots:
     slot_uri: schema:version
     owner: SourceVersion
     domain_of:
+    - Release
     - SourceVersion
     range: string
   version_method:
@@ -544,6 +555,7 @@ slots:
     slot_uri: kozahub_metadata_schema:version_method
     owner: SourceVersion
     domain_of:
+    - Release
     - SourceVersion
     range: string
   retrieved_at:
@@ -554,6 +566,7 @@ slots:
     slot_uri: kozahub_metadata_schema:retrieved_at
     owner: SourceVersion
     domain_of:
+    - Release
     - SourceVersion
     range: datetime
   path:
@@ -622,6 +635,49 @@ slots:
     domain_of:
     - ToolVersions
     range: string
+  Release_id:
+    name: Release_id
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/id
+    description: A CURIE or URI identifier.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:identifier
+    is_a: id
+    domain: Release
+    slot_uri: schema:identifier
+    identifier: true
+    alias: id
+    owner: Release
+    domain_of:
+    - Release
+    is_usage_slot: true
+    usage_slot_name: id
+    range: uriorcurie
+    required: true
+  Release_sources:
+    name: Release_sources
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/sources
+    description: Upstream data sources consumed by this ingest.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:isBasedOn
+    exact_mappings:
+    - schema:isBasedOn
+    close_mappings:
+    - prov:wasDerivedFrom
+    is_a: sources
+    domain: Release
+    slot_uri: schema:isBasedOn
+    alias: sources
+    owner: Release
+    domain_of:
+    - Release
+    is_usage_slot: true
+    usage_slot_name: sources
+    range: Release
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
   ReleaseMetadata_source:
     name: ReleaseMetadata_source
     definition_uri: https://w3id.org/monarch/kozahub-metadata/source
@@ -717,6 +773,46 @@ slots:
     range: string
     required: true
 classes:
+  Release:
+    name: Release
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/Release
+    description: "A self-describing build receipt \u2014 the artifact of one ingest,\
+      \ merge, or composite build. Recursive: each `Release` may declare nested `sources`\
+      \ that are themselves `Release` records. A leaf source (an external dataset)\
+      \ is a `Release` with no nested `sources` and no `artifacts`/`tools`. A consumer\
+      \ build (e.g. monarch-kg) is a `Release` whose `sources` are the per-ingest\
+      \ builds it consumed.\nAggregators emitting this shape rename per-ingest fields\
+      \ when nesting: a per-ingest `release-metadata.yaml` (which uses `source`/`source_version`\
+      \ at the top level) becomes a nested `Release` with `id` set to the ingest name\
+      \ and `version` set to its `source_version`."
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:Dataset
+    close_mappings:
+    - cr:Dataset
+    - prov:Entity
+    slots:
+    - Release_id
+    - name
+    - version
+    - version_method
+    - retrieved_at
+    - urls
+    - build_version
+    - generated_at
+    - transform_version
+    - biolink_version
+    - Release_sources
+    - artifacts
+    - tools
+    slot_usage:
+      id:
+        name: id
+        required: true
+      sources:
+        name: sources
+        range: Release
+    class_uri: schema:Dataset
   ReleaseMetadata:
     name: ReleaseMetadata
     definition_uri: https://w3id.org/monarch/kozahub-metadata/ReleaseMetadata
@@ -841,7 +937,7 @@ classes:
     class_uri: kozahub_metadata_schema:ToolVersions
 metamodel_version: 1.7.0
 source_file: kozahub_metadata_schema.yaml
-source_file_date: '2026-05-02T01:24:13'
-source_file_size: 7969
-generation_date: '2026-05-02T01:24:26'
+source_file_date: '2026-05-02T22:09:56'
+source_file_size: 9154
+generation_date: '2026-05-02T22:10:11'
 
