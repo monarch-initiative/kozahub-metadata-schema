@@ -30,6 +30,44 @@ imports:
 
 classes:
 
+  Release:
+    description: >-
+      A self-describing build receipt — the artifact of one ingest, merge,
+      or composite build. Recursive: each `Release` may declare nested
+      `sources` that are themselves `Release` records. A leaf source (an
+      external dataset) is a `Release` with no nested `sources` and no
+      `artifacts`/`tools`. A consumer build (e.g. monarch-kg) is a
+      `Release` whose `sources` are the per-ingest builds it consumed.
+
+      Aggregators emitting this shape rename per-ingest fields when
+      nesting: a per-ingest `release-metadata.yaml` (which uses
+      `source`/`source_version` at the top level) becomes a nested
+      `Release` with `id` set to the ingest name and `version` set to
+      its `source_version`.
+    class_uri: schema:Dataset
+    close_mappings:
+      - cr:Dataset
+      - prov:Entity
+    slots:
+      - id
+      - name
+      - version
+      - version_method
+      - retrieved_at
+      - urls
+      - build_version
+      - generated_at
+      - transform_version
+      - biolink_version
+      - sources
+      - artifacts
+      - tools
+    slot_usage:
+      id:
+        required: true
+      sources:
+        range: Release
+
   ReleaseMetadata:
     tree_root: true
     description: >-
