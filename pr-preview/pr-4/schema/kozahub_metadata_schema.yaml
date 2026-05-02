@@ -1,0 +1,847 @@
+name: kozahub-metadata-schema
+description: 'LinkML schema for kozahub ingest run metadata: upstream source versions,
+
+  transform/build versions, and output artifacts. Provides a kozahub-local
+
+  vocabulary with semantic mappings to schema.org/Dataset, MLCommons Croissant,
+
+  PROV-O, and translator-ingests'' resource-ingest-guide-schema, so consumers
+
+  can choose their preferred view.'
+title: Kozahub Ingest Metadata Schema
+see_also:
+- https://monarch-initiative.github.io/kozahub-metadata-schema
+id: https://w3id.org/monarch/kozahub-metadata
+imports:
+- linkml:types
+license: BSD-3-Clause
+prefixes:
+  kozahub_metadata_schema:
+    prefix_prefix: kozahub_metadata_schema
+    prefix_reference: https://w3id.org/monarch/kozahub-metadata/
+  linkml:
+    prefix_prefix: linkml
+    prefix_reference: https://w3id.org/linkml/
+  schema:
+    prefix_prefix: schema
+    prefix_reference: http://schema.org/
+  cr:
+    prefix_prefix: cr
+    prefix_reference: http://mlcommons.org/croissant/
+  prov:
+    prefix_prefix: prov
+    prefix_reference: http://www.w3.org/ns/prov#
+  dcterms:
+    prefix_prefix: dcterms
+    prefix_reference: http://purl.org/dc/terms/
+  infores:
+    prefix_prefix: infores
+    prefix_reference: https://w3id.org/biolink/infores/
+  rig:
+    prefix_prefix: rig
+    prefix_reference: https://w3id.org/biolink/resource-ingest-guide-schema/
+  SSSOM:
+    prefix_prefix: SSSOM
+    prefix_reference: https://w3id.org/sssom/
+default_prefix: kozahub_metadata_schema
+default_range: string
+types:
+  string:
+    name: string
+    definition_uri: https://w3id.org/linkml/String
+    description: A character string
+    notes:
+    - In RDF serializations, a slot with range of string is treated as a literal or
+      type xsd:string.   If you are authoring schemas in LinkML YAML, the type is
+      referenced with the lower case "string".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Text
+    base: str
+    uri: xsd:string
+  integer:
+    name: integer
+    definition_uri: https://w3id.org/linkml/Integer
+    description: An integer
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "integer".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Integer
+    base: int
+    uri: xsd:integer
+  boolean:
+    name: boolean
+    definition_uri: https://w3id.org/linkml/Boolean
+    description: A binary (true or false) value
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "boolean".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Boolean
+    base: Bool
+    uri: xsd:boolean
+    repr: bool
+  float:
+    name: float
+    definition_uri: https://w3id.org/linkml/Float
+    description: A real number that conforms to the xsd:float specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "float".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Float
+    base: float
+    uri: xsd:float
+  double:
+    name: double
+    definition_uri: https://w3id.org/linkml/Double
+    description: A real number that conforms to the xsd:double specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "double".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    close_mappings:
+    - schema:Float
+    base: float
+    uri: xsd:double
+  decimal:
+    name: decimal
+    definition_uri: https://w3id.org/linkml/Decimal
+    description: A real number with arbitrary precision that conforms to the xsd:decimal
+      specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "decimal".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    broad_mappings:
+    - schema:Number
+    base: Decimal
+    uri: xsd:decimal
+  time:
+    name: time
+    definition_uri: https://w3id.org/linkml/Time
+    description: A time object represents a (local) time of day, independent of any
+      particular day
+    notes:
+    - URI is dateTime because OWL reasoners do not work with straight date or time
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "time".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Time
+    base: XSDTime
+    uri: xsd:time
+    repr: str
+  date:
+    name: date
+    definition_uri: https://w3id.org/linkml/Date
+    description: a date (year, month and day) in an idealized calendar
+    notes:
+    - URI is dateTime because OWL reasoners don't work with straight date or time
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "date".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Date
+    base: XSDDate
+    uri: xsd:date
+    repr: str
+  datetime:
+    name: datetime
+    definition_uri: https://w3id.org/linkml/Datetime
+    description: The combination of a date and time
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "datetime".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:DateTime
+    base: XSDDateTime
+    uri: xsd:dateTime
+    repr: str
+  date_or_datetime:
+    name: date_or_datetime
+    definition_uri: https://w3id.org/linkml/DateOrDatetime
+    description: Either a date or a datetime
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "date_or_datetime".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: linkml:DateOrDatetime
+    repr: str
+  uriorcurie:
+    name: uriorcurie
+    definition_uri: https://w3id.org/linkml/Uriorcurie
+    description: a URI or a CURIE
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "uriorcurie".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: URIorCURIE
+    uri: xsd:anyURI
+    repr: str
+  curie:
+    name: curie
+    definition_uri: https://w3id.org/linkml/Curie
+    conforms_to: https://www.w3.org/TR/curie/
+    description: a compact URI
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "curie".
+    comments:
+    - in RDF serializations this MUST be expanded to a URI
+    - in non-RDF serializations MAY be serialized as the compact representation
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: Curie
+    uri: xsd:string
+    repr: str
+  uri:
+    name: uri
+    definition_uri: https://w3id.org/linkml/Uri
+    conforms_to: https://www.ietf.org/rfc/rfc3987.txt
+    description: a complete URI
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "uri".
+    comments:
+    - in RDF serializations a slot with range of uri is treated as a literal or type
+      xsd:anyURI unless it is an identifier or a reference to an identifier, in which
+      case it is translated directly to a node
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    close_mappings:
+    - schema:URL
+    base: URI
+    uri: xsd:anyURI
+    repr: str
+  ncname:
+    name: ncname
+    definition_uri: https://w3id.org/linkml/Ncname
+    description: Prefix part of CURIE
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "ncname".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: NCName
+    uri: xsd:string
+    repr: str
+  objectidentifier:
+    name: objectidentifier
+    definition_uri: https://w3id.org/linkml/Objectidentifier
+    description: A URI or CURIE that represents an object in the model.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "objectidentifier".
+    comments:
+    - Used for inheritance and type checking
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: ElementIdentifier
+    uri: shex:iri
+    repr: str
+  nodeidentifier:
+    name: nodeidentifier
+    definition_uri: https://w3id.org/linkml/Nodeidentifier
+    description: A URI, CURIE or BNODE that represents a node in a model.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "nodeidentifier".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: NodeIdentifier
+    uri: shex:nonLiteral
+    repr: str
+  jsonpointer:
+    name: jsonpointer
+    definition_uri: https://w3id.org/linkml/Jsonpointer
+    conforms_to: https://datatracker.ietf.org/doc/html/rfc6901
+    description: A string encoding a JSON Pointer. The value of the string MUST conform
+      to JSON Point syntax and SHOULD dereference to a valid object within the current
+      instance document when encoded in tree form.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "jsonpointer".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+  jsonpath:
+    name: jsonpath
+    definition_uri: https://w3id.org/linkml/Jsonpath
+    conforms_to: https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html
+    description: A string encoding a JSON Path. The value of the string MUST conform
+      to JSON Point syntax and SHOULD dereference to zero or more valid objects within
+      the current instance document when encoded in tree form.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "jsonpath".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+  sparqlpath:
+    name: sparqlpath
+    definition_uri: https://w3id.org/linkml/Sparqlpath
+    conforms_to: https://www.w3.org/TR/sparql11-query/#propertypaths
+    description: A string encoding a SPARQL Property Path. The value of the string
+      MUST conform to SPARQL syntax and SHOULD dereference to zero or more valid objects
+      within the current instance document when encoded as RDF.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "sparqlpath".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+slots:
+  source:
+    name: source
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/source
+    description: "The ingest's identifier \u2014 typically the kozahub repo name."
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:name
+    slot_uri: schema:name
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: string
+  source_version:
+    name: source_version
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/source_version
+    description: The version reported by the upstream source.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:source_version
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: string
+  transform_version:
+    name: transform_version
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/transform_version
+    description: "Content hash (e.g. first 8 chars of sha256) of the ingest's transform\
+      \ code \u2014 its .py files plus the ingest yaml. Changes precisely when the\
+      \ ingest's code changes; stable across no-op commits."
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:transform_version
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: string
+  biolink_version:
+    name: biolink_version
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/biolink_version
+    description: Version of the Biolink Model used.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:biolink_version
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: string
+  release_version:
+    name: release_version
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/release_version
+    description: GitHub release tag for this build's artifacts.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:version
+    slot_uri: schema:version
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: string
+  build_version:
+    name: build_version
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/build_version
+    description: Composite cache key combining source, source_version, transform_version,
+      and biolink_version. Used to detect whether a re-build is needed.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:build_version
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: string
+  generated_at:
+    name: generated_at
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/generated_at
+    description: Timestamp at which this metadata record was emitted.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:dateCreated
+    slot_uri: schema:dateCreated
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: datetime
+  sources:
+    name: sources
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/sources
+    description: Upstream data sources consumed by this ingest.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:isBasedOn
+    exact_mappings:
+    - schema:isBasedOn
+    close_mappings:
+    - prov:wasDerivedFrom
+    slot_uri: schema:isBasedOn
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: SourceVersion
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  mappings:
+    name: mappings
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/mappings
+    description: "Mapping files (typically SSSOM) consumed by this build. Tracked\
+      \ independently from `sources` \u2014 version mismatches across ingests for\
+      \ the same mapping are warnings, not build failures."
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:mappings
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: MappingVersion
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  mapping_set_id:
+    name: mapping_set_id
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/mapping_set_id
+    description: The SSSOM `mapping_set_id` (typically a URL/IRI) read from the mapping
+      file's header. Distinct from `id`, which can be a more local identifier such
+      as `monarch-mappings:mondo`.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - SSSOM:mapping_set_id
+    slot_uri: SSSOM:mapping_set_id
+    owner: MappingVersion
+    domain_of:
+    - MappingVersion
+    range: uriorcurie
+  license:
+    name: license
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/license
+    description: License URL or SPDX identifier for the mapping set.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:license
+    slot_uri: schema:license
+    owner: MappingVersion
+    domain_of:
+    - MappingVersion
+    range: string
+  artifacts:
+    name: artifacts
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/artifacts
+    description: Files produced by this ingest run.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:distribution
+    slot_uri: schema:distribution
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: Artifact
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  tools:
+    name: tools
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/tools
+    description: Versions of build-time tools.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:tools
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    range: ToolVersions
+    inlined: true
+    inlined_as_list: true
+  id:
+    name: id
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/id
+    description: A CURIE or URI identifier.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:identifier
+    slot_uri: schema:identifier
+    identifier: true
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    range: uriorcurie
+    required: true
+  name:
+    name: name
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/name
+    description: A human-readable name.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:name
+    slot_uri: schema:name
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    range: string
+  urls:
+    name: urls
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/urls
+    description: One or more URLs from which this source was fetched. Multi-file releases
+      (e.g. Alliance, STRING, BGee with per-species files) should list every URL retrieved
+      under a single SourceVersion sharing one logical version.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:url
+    slot_uri: schema:url
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    range: uri
+    multivalued: true
+  version:
+    name: version
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/version
+    description: A version label as reported by the source.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:version
+    slot_uri: schema:version
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    range: string
+  version_method:
+    name: version_method
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/version_method
+    description: "How the version was determined \u2014 an audit trail. Examples include\
+      \ \"url_path\", \"http_last_modified\", \"github_release_api\", \"gaf_header\"\
+      , \"rest_info_api\", \"github_branch_head\"."
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:version_method
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    range: string
+  retrieved_at:
+    name: retrieved_at
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/retrieved_at
+    description: Timestamp at which this source was retrieved.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:retrieved_at
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    range: datetime
+  path:
+    name: path
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/path
+    description: Path of the produced artifact, relative to the ingest's output directory.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:contentUrl
+    slot_uri: schema:contentUrl
+    owner: Artifact
+    domain_of:
+    - Artifact
+    range: string
+  sha256:
+    name: sha256
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/sha256
+    description: Hex-encoded SHA-256 checksum of the artifact.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - cr:sha256
+    slot_uri: cr:sha256
+    owner: Artifact
+    domain_of:
+    - Artifact
+    range: string
+  format:
+    name: format
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/format
+    description: Encoding format of the artifact (e.g. "tsv", "nt-gz", "jsonl").
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:encodingFormat
+    slot_uri: schema:encodingFormat
+    owner: Artifact
+    domain_of:
+    - Artifact
+    range: string
+  koza:
+    name: koza
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/koza
+    description: Version of the koza package used.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:koza
+    owner: ToolVersions
+    domain_of:
+    - ToolVersions
+    range: string
+  biolink_model:
+    name: biolink_model
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/biolink_model
+    description: Version of biolink-model used.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:biolink_model
+    owner: ToolVersions
+    domain_of:
+    - ToolVersions
+    range: string
+  kghub_downloader:
+    name: kghub_downloader
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/kghub_downloader
+    description: Version of kghub-downloader used (if installed).
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slot_uri: kozahub_metadata_schema:kghub_downloader
+    owner: ToolVersions
+    domain_of:
+    - ToolVersions
+    range: string
+  ReleaseMetadata_source:
+    name: ReleaseMetadata_source
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/source
+    description: "The ingest's identifier \u2014 typically the kozahub repo name."
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:name
+    is_a: source
+    domain: ReleaseMetadata
+    slot_uri: schema:name
+    alias: source
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    is_usage_slot: true
+    usage_slot_name: source
+    range: string
+    required: true
+  ReleaseMetadata_generated_at:
+    name: ReleaseMetadata_generated_at
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/generated_at
+    description: Timestamp at which this metadata record was emitted.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:dateCreated
+    is_a: generated_at
+    domain: ReleaseMetadata
+    slot_uri: schema:dateCreated
+    alias: generated_at
+    owner: ReleaseMetadata
+    domain_of:
+    - ReleaseMetadata
+    is_usage_slot: true
+    usage_slot_name: generated_at
+    range: datetime
+    required: true
+  SourceVersion_id:
+    name: SourceVersion_id
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/id
+    description: INFORES CURIE identifying the source (e.g. "infores:hgnc").
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:identifier
+    is_a: id
+    domain: SourceVersion
+    slot_uri: schema:identifier
+    identifier: true
+    alias: id
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    is_usage_slot: true
+    usage_slot_name: id
+    range: uriorcurie
+    required: true
+  SourceVersion_urls:
+    name: SourceVersion_urls
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/urls
+    description: One or more URLs from which this source was fetched. Multi-file releases
+      (e.g. Alliance, STRING, BGee with per-species files) should list every URL retrieved
+      under a single SourceVersion sharing one logical version.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:url
+    is_a: urls
+    domain: SourceVersion
+    slot_uri: schema:url
+    alias: urls
+    owner: SourceVersion
+    domain_of:
+    - SourceVersion
+    is_usage_slot: true
+    usage_slot_name: urls
+    range: uri
+    required: true
+    multivalued: true
+  Artifact_path:
+    name: Artifact_path
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/path
+    description: Path of the produced artifact, relative to the ingest's output directory.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:contentUrl
+    is_a: path
+    domain: Artifact
+    slot_uri: schema:contentUrl
+    alias: path
+    owner: Artifact
+    domain_of:
+    - Artifact
+    is_usage_slot: true
+    usage_slot_name: path
+    range: string
+    required: true
+classes:
+  ReleaseMetadata:
+    name: ReleaseMetadata
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/ReleaseMetadata
+    description: 'Release-level metadata for a single kozahub ingest build. Captures
+      the upstream sources consumed, the artifacts produced, and the versions of the
+      source data, ingest code, and dependencies relevant to reproducibility.
+
+      Scope note: this schema describes the *release/build receipt* only. Per-output-file
+      content schemas (column-level / data-dictionary metadata derived from the produced
+      TSVs) are a separate concern and will live in a sibling schema if added.'
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:Dataset
+    exact_mappings:
+    - schema:Dataset
+    close_mappings:
+    - cr:Dataset
+    - prov:Entity
+    slots:
+    - ReleaseMetadata_source
+    - source_version
+    - transform_version
+    - biolink_version
+    - release_version
+    - build_version
+    - ReleaseMetadata_generated_at
+    - sources
+    - mappings
+    - artifacts
+    - tools
+    slot_usage:
+      source:
+        name: source
+        required: true
+      generated_at:
+        name: generated_at
+        required: true
+    class_uri: schema:Dataset
+    tree_root: true
+  SourceVersion:
+    name: SourceVersion
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/SourceVersion
+    description: An upstream data source consumed by this ingest, with the version
+      observed at retrieval time.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - schema:Dataset
+    close_mappings:
+    - rig:SourceInformation
+    - prov:Entity
+    slots:
+    - SourceVersion_id
+    - name
+    - SourceVersion_urls
+    - version
+    - version_method
+    - retrieved_at
+    slot_usage:
+      id:
+        name: id
+        description: INFORES CURIE identifying the source (e.g. "infores:hgnc").
+        required: true
+      urls:
+        name: urls
+        required: true
+    class_uri: schema:Dataset
+  MappingVersion:
+    name: MappingVersion
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/MappingVersion
+    description: "A mapping file (typically SSSOM) consumed by this ingest. Distinct\
+      \ from a primary upstream `SourceVersion` because mapping versions have looser\
+      \ correctness implications \u2014 divergent mapping versions across contributing\
+      \ ingests are typically informational rather than build-breaking. Populated\
+      \ primarily by the merging layer (e.g. monarch-ingest) where mappings are applied\
+      \ to rewire IDs; individual ingests that consume mapping files for label-lookup\
+      \ or similar non-rewiring purposes generally need not populate this."
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    close_mappings:
+    - SSSOM:MappingSet
+    is_a: SourceVersion
+    slots:
+    - SourceVersion_id
+    - name
+    - SourceVersion_urls
+    - version
+    - version_method
+    - retrieved_at
+    - mapping_set_id
+    - license
+    class_uri: kozahub_metadata_schema:MappingVersion
+  Artifact:
+    name: Artifact
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/Artifact
+    description: A file produced by this ingest run.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    mappings:
+    - cr:FileObject
+    exact_mappings:
+    - cr:FileObject
+    close_mappings:
+    - schema:DataDownload
+    slots:
+    - Artifact_path
+    - sha256
+    - format
+    slot_usage:
+      path:
+        name: path
+        required: true
+    class_uri: cr:FileObject
+  ToolVersions:
+    name: ToolVersions
+    definition_uri: https://w3id.org/monarch/kozahub-metadata/ToolVersions
+    description: Versions of build-time tools relevant to reproducibility. Optional
+      keys are populated from importlib.metadata at write time when the package is
+      installed.
+    from_schema: https://w3id.org/monarch/kozahub-metadata
+    slots:
+    - koza
+    - biolink_model
+    - kghub_downloader
+    class_uri: kozahub_metadata_schema:ToolVersions
+metamodel_version: 1.7.0
+source_file: kozahub_metadata_schema.yaml
+source_file_date: '2026-05-02T01:25:37'
+source_file_size: 7969
+generation_date: '2026-05-02T01:25:51'
+
