@@ -1,0 +1,72 @@
+# Worked example: monarch-kg release-metadata.yaml — the layer-2 build receipt
+# produced by monarch-ingest. Combines aggregated upstream sources from
+# contributing kozahub ingests + kg-phenio (sources) with mappings applied
+# during the closure step (mappings).
+source: monarch-kg
+release_version: "2026-05-01"
+transform_version: f00d1234
+biolink_version: "4.3.6"
+build_version: monarch-kg_2026-05-01_f00d1234_4.3.6
+generated_at: "2026-05-01T22:00:00Z"
+
+sources:
+  - id: infores:hgnc
+    name: HUGO Gene Nomenclature Committee
+    urls:
+      - http://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt
+    version: "2026-05-01"
+    version_method: rest_info_api
+    retrieved_at: "2026-04-30T17:34:55Z"
+  - id: infores:agr
+    name: Alliance of Genome Resources
+    urls:
+      - https://fms.alliancegenome.org/download/BGI_HUMAN.json.gz
+    version: "8.3.0"
+    version_method: alliance_fms_api
+    retrieved_at: "2026-04-30T17:34:58Z"
+  - id: infores:ncbi-gene
+    name: NCBI Gene
+    urls:
+      - https://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz
+    version: "2026-05-01"
+    version_method: http_last_modified
+    retrieved_at: "2026-04-30T18:11:02Z"
+  - id: infores:mondo
+    name: Mondo Disease Ontology
+    urls:
+      - http://purl.obolibrary.org/obo/mondo.owl
+    version: "2026-04-12"
+    version_method: owl_version_iri
+    retrieved_at: "2026-04-29T09:00:00Z"
+
+mappings:
+  - id: monarch-mappings:mondo
+    name: Mondo SSSOM
+    urls:
+      - https://data.monarchinitiative.org/mappings/latest/mondo.sssom.tsv
+    version: "2026-04-30"
+    version_method: http_last_modified
+    retrieved_at: "2026-05-01T20:15:30Z"
+    mapping_set_id: http://purl.obolibrary.org/obo/mondo/mappings/mondo.sssom.tsv
+    license: https://w3id.org/sssom/license/unspecified
+  - id: monarch-mappings:gene
+    name: Monarch Gene Mappings
+    urls:
+      - https://data.monarchinitiative.org/mappings/latest/gene_mappings.sssom.tsv
+    version: "2026-04-25"
+    version_method: http_last_modified
+    retrieved_at: "2026-05-01T20:15:32Z"
+    mapping_set_id: https://data.monarchinitiative.org/mappings/gene_mappings.sssom.tsv
+    license: https://creativecommons.org/licenses/by/4.0/
+
+artifacts:
+  - path: monarch-kg.tar.gz
+    sha256: "1111111111111111111111111111111111111111111111111111111111111111"
+    format: kgx-tsv-tar-gz
+  - path: monarch-kg.duckdb
+    sha256: "2222222222222222222222222222222222222222222222222222222222222222"
+    format: duckdb
+
+tools:
+  koza: 2.1.1
+  biolink_model: 4.3.6

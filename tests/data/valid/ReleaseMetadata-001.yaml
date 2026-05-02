@@ -1,0 +1,35 @@
+# Worked example: hgnc-ingest run metadata
+source: hgnc-ingest
+source_version: "2026-04-15"
+transform_version: a1b2c3d4
+biolink_version: "4.2.5"
+release_version: "2026-04-30"
+build_version: hgnc-ingest_2026-04-15_a1b2c3d4_4.2.5
+generated_at: "2026-04-30T17:36:09Z"
+sources:
+  - id: infores:hgnc
+    name: HUGO Gene Nomenclature Committee
+    urls:
+      - http://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt
+    version: "2026-04-15"
+    version_method: rest_info_api
+    retrieved_at: "2026-04-30T17:34:55Z"
+  - id: infores:agr
+    name: Alliance of Genome Resources
+    urls:
+      - https://fms.alliancegenome.org/download/BGI_HUMAN.json.gz
+      - https://fms.alliancegenome.org/download/BGI_MGI.json.gz
+      - https://fms.alliancegenome.org/download/BGI_RGD.json.gz
+    version: "8.3.0"
+    version_method: alliance_fms_api
+    retrieved_at: "2026-04-30T17:34:58Z"
+artifacts:
+  - path: hgnc_gene_nodes.tsv
+    sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    format: tsv
+  - path: hgnc_gene.nt.gz
+    sha256: 6e6f6c79775f436c61756465e3b0c44298fc1c149afbf4c8996fb92427ae41e4
+    format: nt-gz
+tools:
+  koza: 0.6.3
+  biolink_model: 4.2.5

@@ -1,0 +1,280 @@
+---
+id: https://w3id.org/monarch/kozahub-metadata
+name: kozahub-metadata-schema
+title: Kozahub Ingest Metadata Schema
+description: |-
+  LinkML schema for kozahub ingest run metadata: upstream source versions,
+  transform/build versions, and output artifacts. Provides a kozahub-local
+  vocabulary with semantic mappings to schema.org/Dataset, MLCommons Croissant,
+  PROV-O, and translator-ingests' resource-ingest-guide-schema, so consumers
+  can choose their preferred view.
+license: BSD-3-Clause
+see_also:
+  - https://monarch-initiative.github.io/kozahub-metadata-schema
+
+prefixes:
+  kozahub_metadata_schema: https://w3id.org/monarch/kozahub-metadata/
+  linkml: https://w3id.org/linkml/
+  schema: http://schema.org/
+  cr: http://mlcommons.org/croissant/
+  prov: http://www.w3.org/ns/prov#
+  dcterms: http://purl.org/dc/terms/
+  infores: https://w3id.org/biolink/infores/
+  rig: https://w3id.org/biolink/resource-ingest-guide-schema/
+  SSSOM: https://w3id.org/sssom/
+default_prefix: kozahub_metadata_schema
+default_range: string
+
+imports:
+  - linkml:types
+
+classes:
+
+  ReleaseMetadata:
+    tree_root: true
+    description: >-
+      Release-level metadata for a single kozahub ingest build. Captures the
+      upstream sources consumed, the artifacts produced, and the versions of
+      the source data, ingest code, and dependencies relevant to
+      reproducibility.
+
+      Scope note: this schema describes the *release/build receipt* only.
+      Per-output-file content schemas (column-level / data-dictionary
+      metadata derived from the produced TSVs) are a separate concern and
+      will live in a sibling schema if added.
+    class_uri: schema:Dataset
+    exact_mappings:
+      - schema:Dataset
+    close_mappings:
+      - cr:Dataset
+      - prov:Entity
+    slots:
+      - source
+      - source_version
+      - transform_version
+      - biolink_version
+      - release_version
+      - build_version
+      - generated_at
+      - sources
+      - mappings
+      - artifacts
+      - tools
+    slot_usage:
+      source:
+        required: true
+      generated_at:
+        required: true
+
+  SourceVersion:
+    description: >-
+      An upstream data source consumed by this ingest, with the version
+      observed at retrieval time.
+    class_uri: schema:Dataset
+    close_mappings:
+      - rig:SourceInformation
+      - prov:Entity
+    slots:
+      - id
+      - name
+      - urls
+      - version
+      - version_method
+      - retrieved_at
+    slot_usage:
+      id:
+        required: true
+        description: >-
+          INFORES CURIE identifying the source (e.g. "infores:hgnc").
+      urls:
+        required: true
+
+  MappingVersion:
+    is_a: SourceVersion
+    description: >-
+      A mapping file (typically SSSOM) consumed by this ingest. Distinct
+      from a primary upstream `SourceVersion` because mapping versions
+      have looser correctness implications — divergent mapping versions
+      across contributing ingests are typically informational rather than
+      build-breaking. Populated primarily by the merging layer
+      (e.g. monarch-ingest) where mappings are applied to rewire IDs;
+      individual ingests that consume mapping files for label-lookup or
+      similar non-rewiring purposes generally need not populate this.
+    close_mappings:
+      - SSSOM:MappingSet
+    slots:
+      - mapping_set_id
+      - license
+
+  Artifact:
+    description: >-
+      A file produced by this ingest run.
+    class_uri: cr:FileObject
+    exact_mappings:
+      - cr:FileObject
+    close_mappings:
+      - schema:DataDownload
+    slots:
+      - path
+      - sha256
+      - format
+    slot_usage:
+      path:
+        required: true
+
+  ToolVersions:
+    description: >-
+      Versions of build-time tools relevant to reproducibility. Optional
+      keys are populated from importlib.metadata at write time when the
+      package is installed.
+    slots:
+      - koza
+      - biolink_model
+      - kghub_downloader
+
+slots:
+
+  source:
+    description: The ingest's identifier — typically the kozahub repo name.
+    range: string
+    slot_uri: schema:name
+
+  source_version:
+    description: The version reported by the upstream source.
+    range: string
+
+  transform_version:
+    description: >-
+      Content hash (e.g. first 8 chars of sha256) of the ingest's transform
+      code — its .py files plus the ingest yaml. Changes precisely when the
+      ingest's code changes; stable across no-op commits.
+    range: string
+
+  biolink_version:
+    description: Version of the Biolink Model used.
+    range: string
+
+  release_version:
+    description: GitHub release tag for this build's artifacts.
+    range: string
+    slot_uri: schema:version
+
+  build_version:
+    description: >-
+      Composite cache key combining source, source_version, transform_version,
+      and biolink_version. Used to detect whether a re-build is needed.
+    range: string
+
+  generated_at:
+    description: Timestamp at which this metadata record was emitted.
+    range: datetime
+    slot_uri: schema:dateCreated
+
+  sources:
+    description: Upstream data sources consumed by this ingest.
+    range: SourceVersion
+    multivalued: true
+    inlined_as_list: true
+    slot_uri: schema:isBasedOn
+    exact_mappings:
+      - schema:isBasedOn
+    close_mappings:
+      - prov:wasDerivedFrom
+
+  mappings:
+    description: >-
+      Mapping files (typically SSSOM) consumed by this build. Tracked
+      independently from `sources` — version mismatches across ingests
+      for the same mapping are warnings, not build failures.
+    range: MappingVersion
+    multivalued: true
+    inlined_as_list: true
+
+  mapping_set_id:
+    description: >-
+      The SSSOM `mapping_set_id` (typically a URL/IRI) read from the
+      mapping file's header. Distinct from `id`, which can be a more
+      local identifier such as `monarch-mappings:mondo`.
+    range: uriorcurie
+    slot_uri: SSSOM:mapping_set_id
+
+  license:
+    description: License URL or SPDX identifier for the mapping set.
+    range: string
+    slot_uri: schema:license
+
+  artifacts:
+    description: Files produced by this ingest run.
+    range: Artifact
+    multivalued: true
+    inlined_as_list: true
+    slot_uri: schema:distribution
+
+  tools:
+    description: Versions of build-time tools.
+    range: ToolVersions
+
+  id:
+    identifier: true
+    range: uriorcurie
+    description: A CURIE or URI identifier.
+    slot_uri: schema:identifier
+
+  name:
+    range: string
+    description: A human-readable name.
+    slot_uri: schema:name
+
+  urls:
+    range: uri
+    multivalued: true
+    description: >-
+      One or more URLs from which this source was fetched. Multi-file
+      releases (e.g. Alliance, STRING, BGee with per-species files) should
+      list every URL retrieved under a single SourceVersion sharing one
+      logical version.
+    slot_uri: schema:url
+
+  version:
+    range: string
+    description: A version label as reported by the source.
+    slot_uri: schema:version
+
+  version_method:
+    description: >-
+      How the version was determined — an audit trail. Examples include
+      "url_path", "http_last_modified", "github_release_api", "gaf_header",
+      "rest_info_api", "github_branch_head".
+    range: string
+
+  retrieved_at:
+    description: Timestamp at which this source was retrieved.
+    range: datetime
+
+  path:
+    description: >-
+      Path of the produced artifact, relative to the ingest's output directory.
+    range: string
+    slot_uri: schema:contentUrl
+
+  sha256:
+    description: Hex-encoded SHA-256 checksum of the artifact.
+    range: string
+    slot_uri: cr:sha256
+
+  format:
+    description: Encoding format of the artifact (e.g. "tsv", "nt-gz", "jsonl").
+    range: string
+    slot_uri: schema:encodingFormat
+
+  koza:
+    description: Version of the koza package used.
+    range: string
+
+  biolink_model:
+    description: Version of biolink-model used.
+    range: string
+
+  kghub_downloader:
+    description: Version of kghub-downloader used (if installed).
+    range: string

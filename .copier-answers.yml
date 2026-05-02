@@ -1,0 +1,16 @@
+# Changes here will be overwritten by Copier
+_commit: v0.4.2
+_src_path: gh:linkml/linkml-project-copier
+add_example: true
+copyright_year: '2026'
+email: kevin@tislab.org
+full_name: Kevin Schaper
+gh_action_docs_preview: true
+gh_action_pypi: true
+github_org: monarch-initiative
+license: BSD-3-Clause
+project_description: LinkML schema for kozahub ingest run metadata (upstream source
+    versions, transform/build versions, output artifacts).
+project_name: kozahub-metadata-schema
+project_slug: kozahub_metadata_schema
+

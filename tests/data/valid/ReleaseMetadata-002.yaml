@@ -1,0 +1,26 @@
+# Worked example: ncbi-gene run metadata, version derived from HTTP Last-Modified
+source: ncbi-gene
+source_version: "2026-04-22"
+transform_version: 7c8d9eaf
+biolink_version: "4.2.5"
+release_version: "2026-04-30"
+build_version: ncbi-gene_2026-04-22_7c8d9eaf_4.2.5
+generated_at: "2026-04-30T18:12:44Z"
+sources:
+  - id: infores:ncbi-gene
+    name: NCBI Gene
+    urls:
+      - https://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz
+    version: "2026-04-22"
+    version_method: http_last_modified
+    retrieved_at: "2026-04-30T18:11:02Z"
+artifacts:
+  - path: ncbi_gene_nodes.tsv
+    sha256: 3f786850e387550fdab836ed7e6dc881de23001b8a67b0e2cedc02f38aa53d24
+    format: tsv
+  - path: ncbi_gene.nt.gz
+    sha256: 1ff8a7b5dc12d75d28b72a0bcaf2e5c73e02db85a1d54aa12f9f0a5bd28d3be5
+    format: nt-gz
+tools:
+  koza: 0.6.3
+  biolink_model: 4.2.5
