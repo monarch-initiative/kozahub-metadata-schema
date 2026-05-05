@@ -937,7 +937,7 @@ classes:
     class_uri: kozahub_metadata_schema:ToolVersions
 metamodel_version: 1.7.0
 source_file: kozahub_metadata_schema.yaml
-source_file_date: '2026-05-02T22:09:56'
+source_file_date: '2026-05-05T05:54:58'
 source_file_size: 9154
-generation_date: '2026-05-02T22:10:11'
+generation_date: '2026-05-05T05:55:10'
 
