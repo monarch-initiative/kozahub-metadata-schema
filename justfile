@@ -94,8 +94,15 @@ lint:
 
 # Generate md documentation for the schema and add artifacts
 [group('model development')]
-gen-doc: _gen-yaml && _add-artifacts
+gen-doc: _gen-yaml && _gen-erdiagram _add-artifacts
   uv run gen-doc {{gen_doc_args}} -d {{docdir}} {{source_schema_path}}
+
+# Generate a top-level Mermaid ER diagram page.
+# --no-structural so classes not reachable from tree_root (e.g. Release) are included.
+_gen-erdiagram:
+  -mkdir -p {{docdir}}
+  printf '# Schema ER Diagram\n\n' > {{docdir}}/erdiagram.md
+  uv run gen-erdiagram --no-structural {{source_schema_path}} >> {{docdir}}/erdiagram.md
 
 # Build docs and run test server
 [group('model development')]
