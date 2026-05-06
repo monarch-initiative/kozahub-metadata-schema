@@ -1,6 +1,6 @@
 # Worked example: ncbi-gene run metadata, version derived from HTTP Last-Modified
-source: ncbi-gene
-source_version: "2026-04-22"
+id: ncbi-gene
+version: "2026-04-22"
 transform_version: 7c8d9eaf
 biolink_version: "4.2.5"
 release_version: "2026-04-30"

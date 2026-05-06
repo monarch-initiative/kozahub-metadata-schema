@@ -31,55 +31,19 @@ imports:
 classes:
 
   Release:
-    description: >-
-      A self-describing build receipt — the artifact of one ingest, merge,
-      or composite build. Recursive: each `Release` may declare nested
-      `sources` that are themselves `Release` records. A leaf source (an
-      external dataset) is a `Release` with no nested `sources` and no
-      `artifacts`/`tools`. A consumer build (e.g. monarch-kg) is a
-      `Release` whose `sources` are the per-ingest builds it consumed.
-
-      Aggregators emitting this shape rename per-ingest fields when
-      nesting: a per-ingest `release-metadata.yaml` (which uses
-      `source`/`source_version` at the top level) becomes a nested
-      `Release` with `id` set to the ingest name and `version` set to
-      its `source_version`.
-    class_uri: schema:Dataset
-    close_mappings:
-      - cr:Dataset
-      - prov:Entity
-    slots:
-      - id
-      - name
-      - version
-      - version_method
-      - retrieved_at
-      - urls
-      - build_version
-      - generated_at
-      - transform_version
-      - biolink_version
-      - sources
-      - artifacts
-      - tools
-    slot_usage:
-      id:
-        required: true
-      sources:
-        range: Release
-
-  ReleaseMetadata:
     tree_root: true
     description: >-
-      Release-level metadata for a single kozahub ingest build. Captures the
-      upstream sources consumed, the artifacts produced, and the versions of
-      the source data, ingest code, and dependencies relevant to
-      reproducibility.
+      A self-describing build receipt — fully recursive. The same shape
+      represents a leaf upstream dataset, a per-ingest build, and a
+      composite/aggregator build (e.g. kg-phenio, monarch-kg). A leaf
+      upstream is a `Release` with no `sources` and no `artifacts`/`tools`;
+      a per-ingest build is a `Release` whose `sources` are leaf upstreams;
+      a composite is a `Release` whose `sources` are themselves per-ingest
+      or composite `Release`s.
 
-      Scope note: this schema describes the *release/build receipt* only.
-      Per-output-file content schemas (column-level / data-dictionary
-      metadata derived from the produced TSVs) are a separate concern and
-      will live in a sibling schema if added.
+      Convention: set `generated_at` on the outermost (root) Release of an
+      emitted document. Nested `Release`s use `retrieved_at` to record
+      when the parent fetched them.
     class_uri: schema:Dataset
     exact_mappings:
       - schema:Dataset
@@ -87,54 +51,30 @@ classes:
       - cr:Dataset
       - prov:Entity
     slots:
-      - source
-      - source_version
+      - id
+      - name
+      - version
+      - version_method
+      - retrieved_at
+      - urls
+      - generated_at
       - transform_version
       - biolink_version
       - release_version
       - build_version
-      - generated_at
       - sources
       - mappings
       - artifacts
       - tools
-    slot_usage:
-      source:
-        required: true
-      generated_at:
-        required: true
-
-  SourceVersion:
-    description: >-
-      An upstream data source consumed by this ingest, with the version
-      observed at retrieval time.
-    class_uri: schema:Dataset
-    close_mappings:
-      - rig:SourceInformation
-      - prov:Entity
-    slots:
-      - id
-      - name
-      - urls
-      - version
-      - version_method
-      - retrieved_at
-    slot_usage:
-      id:
-        required: true
-        description: >-
-          INFORES CURIE identifying the source (e.g. "infores:hgnc").
-      urls:
-        required: true
 
   MappingVersion:
-    is_a: SourceVersion
+    is_a: Release
     description: >-
-      A mapping file (typically SSSOM) consumed by this ingest. Distinct
-      from a primary upstream `SourceVersion` because mapping versions
-      have looser correctness implications — divergent mapping versions
-      across contributing ingests are typically informational rather than
-      build-breaking. Populated primarily by the merging layer
+      A mapping file (typically SSSOM) consumed by this build. Distinct
+      from a primary upstream `Release` listed in `sources` because mapping
+      versions have looser correctness implications — divergent mapping
+      versions across contributing ingests are typically informational
+      rather than build-breaking. Populated primarily by the merging layer
       (e.g. monarch-ingest) where mappings are applied to rewire IDs;
       individual ingests that consume mapping files for label-lookup or
       similar non-rewiring purposes generally need not populate this.
@@ -172,15 +112,6 @@ classes:
 
 slots:
 
-  source:
-    description: The ingest's identifier — typically the kozahub repo name.
-    range: string
-    slot_uri: schema:name
-
-  source_version:
-    description: The version reported by the upstream source.
-    range: string
-
   transform_version:
     description: >-
       Content hash (e.g. first 8 chars of sha256) of the ingest's transform
@@ -199,18 +130,21 @@ slots:
 
   build_version:
     description: >-
-      Composite cache key combining source, source_version, transform_version,
+      Composite cache key combining id, version, transform_version,
       and biolink_version. Used to detect whether a re-build is needed.
     range: string
 
   generated_at:
-    description: Timestamp at which this metadata record was emitted.
+    description: >-
+      Timestamp at which this metadata record was emitted. Set on the
+      outermost (root) Release of a document; nested Releases use
+      `retrieved_at` instead.
     range: datetime
     slot_uri: schema:dateCreated
 
   sources:
-    description: Upstream data sources consumed by this ingest.
-    range: SourceVersion
+    description: Upstream data sources or builds consumed by this Release.
+    range: Release
     multivalued: true
     inlined_as_list: true
     slot_uri: schema:isBasedOn
@@ -254,8 +188,13 @@ slots:
 
   id:
     identifier: true
+    required: true
     range: uriorcurie
-    description: A CURIE or URI identifier.
+    description: >-
+      A CURIE or URI identifier for this Release — the kozahub repo name
+      for an ingest build (e.g. "hgnc-ingest"), an INFORES CURIE for a
+      leaf upstream (e.g. "infores:hgnc"), or a build name for a composite
+      (e.g. "monarch-kg", "kg-phenio").
     slot_uri: schema:identifier
 
   name:
@@ -269,24 +208,30 @@ slots:
     description: >-
       One or more URLs from which this source was fetched. Multi-file
       releases (e.g. Alliance, STRING, BGee with per-species files) should
-      list every URL retrieved under a single SourceVersion sharing one
+      list every URL retrieved under a single Release sharing one
       logical version.
     slot_uri: schema:url
 
   version:
     range: string
-    description: A version label as reported by the source.
+    description: >-
+      The version of this Release as reported by its source — an upstream
+      data version for a leaf, the source data version for a per-ingest
+      build, or a composite cache key for a composite build.
     slot_uri: schema:version
 
   version_method:
     description: >-
       How the version was determined — an audit trail. Examples include
       "url_path", "http_last_modified", "github_release_api", "gaf_header",
-      "rest_info_api", "github_branch_head".
+      "rest_info_api", "github_branch_head", "owl_version_iri".
     range: string
 
   retrieved_at:
-    description: Timestamp at which this source was retrieved.
+    description: >-
+      Timestamp at which this Release was retrieved by its parent. Used on
+      nested Releases (i.e. members of a parent's `sources`); the outermost
+      Release uses `generated_at` instead.
     range: datetime
 
   path:
