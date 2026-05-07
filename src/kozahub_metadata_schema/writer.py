@@ -1,9 +1,10 @@
-"""Compose and write ReleaseMetadata YAML for a kozahub ingest run.
+"""Compose and write a Release YAML for a kozahub ingest run.
 
-Each ingest provides a `get_source_versions()` function that returns a list of
-SourceVersion-shaped dicts. This module wraps that with the boilerplate:
-content-hashing the transform code, looking up tool versions, computing the
-build_version composite key, and emitting `output/release-metadata.yaml`.
+Each ingest provides a `get_source_versions()` function that returns a list
+of Release-shaped dicts (one per upstream consumed). This module wraps that
+with the boilerplate: content-hashing the transform code, looking up tool
+versions, computing the build_version composite key, and emitting
+`output/release-metadata.yaml`.
 
 Also exports `urls_from_download_yaml()` plus a small set of version-fetcher
 helpers covering the patterns common across kozahub ingests, so individual
@@ -69,7 +70,7 @@ def write_metadata(
     release_version: str | None = None,
     primary_source_version: str | None = None,
 ) -> dict:
-    """Compose IngestMetadata, write output_dir/metadata.yaml, return the dict.
+    """Compose a Release dict, write output_dir/release-metadata.yaml, return it.
 
     transform_paths: files whose content goes into transform_version (e.g.
         the ingest's *.py and ingest yaml under src/).
@@ -113,8 +114,8 @@ def write_metadata(
             tools[key] = v
 
     metadata = {
-        "source": ingest_name,
-        "source_version": primary_source_version,
+        "id": ingest_name,
+        "version": primary_source_version,
         "transform_version": transform_version,
         "biolink_version": biolink_version,
         "build_version": build_version,

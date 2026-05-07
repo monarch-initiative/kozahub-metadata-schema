@@ -1,5 +1,5 @@
-# Invalid: missing required `source` and `generated_at`
-source_version: "2026-04-15"
+# Invalid: missing required `id`
+version: "2026-04-15"
 transform_version: a1b2c3d4
 sources:
   - id: infores:hgnc

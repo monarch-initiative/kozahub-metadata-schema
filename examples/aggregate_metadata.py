@@ -36,7 +36,7 @@ def aggregate(ingest_dirs: list[Path]) -> dict:
         if m is None:
             continue
         builds.append({
-            "ingest": m["source"],
+            "ingest": m["id"],
             "build_version": m["build_version"],
             "transform_version": m["transform_version"],
             "biolink_version": m.get("biolink_version"),
@@ -45,7 +45,7 @@ def aggregate(ingest_dirs: list[Path]) -> dict:
             "url_count": sum(len(s.get("urls") or []) for s in m.get("sources") or []),
         })
         for src in m.get("sources") or []:
-            by_source[src["id"]].append((m["source"], src))
+            by_source[src["id"]].append((m["id"], src))
 
     # Detect version disagreements when the same source is consumed by multiple ingests.
     consolidated_sources = []

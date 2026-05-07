@@ -1,6 +1,6 @@
 # Worked example: hgnc-ingest run metadata
-source: hgnc-ingest
-source_version: "2026-04-15"
+id: hgnc-ingest
+version: "2026-04-15"
 transform_version: a1b2c3d4
 biolink_version: "4.2.5"
 release_version: "2026-04-30"

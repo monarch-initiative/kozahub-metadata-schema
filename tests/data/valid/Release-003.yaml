@@ -2,7 +2,7 @@
 # produced by monarch-ingest. Combines aggregated upstream sources from
 # contributing kozahub ingests + kg-phenio (sources) with mappings applied
 # during the closure step (mappings).
-source: monarch-kg
+id: monarch-kg
 release_version: "2026-05-01"
 transform_version: f00d1234
 biolink_version: "4.3.6"
