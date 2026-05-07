@@ -513,7 +513,7 @@
 
 
 <h1 id="slot-id">Slot: id</h1>
-<p><em>A CURIE or URI identifier.</em></p>
+<p><em>A CURIE or URI identifier for this Release — the kozahub repo name for an ingest build (e.g. "hgnc-ingest"), an INFORES CURIE for a leaf upstream (e.g. "infores:hgnc"), or a build name for a composite (e.g. "monarch-kg", "kg-phenio").</em></p>
 <p>URI: <a href="http://schema.org/identifier">schema:identifier</a>
 Alias: id</p>
 <!-- no inheritance hierarchy -->
@@ -530,18 +530,13 @@ Alias: id</p>
 <tbody>
 <tr>
 <td><a href="../MappingVersion/">MappingVersion</a></td>
-<td>A mapping file (typically SSSOM) consumed by this ingest</td>
+<td>A mapping file (typically SSSOM) consumed by this build</td>
 <td>no</td>
 </tr>
 <tr>
 <td><a href="../Release/">Release</a></td>
-<td>A self-describing build receipt — the artifact of one ingest, merge, or compo...</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
-<td>An upstream data source consumed by this ingest, with the version observed at...</td>
-<td>yes</td>
+<td>A self-describing build receipt — fully recursive</td>
+<td>no</td>
 </tr>
 </tbody>
 </table>
@@ -561,7 +556,7 @@ Alias: id</p>
 </tr>
 <tr>
 <td>Domain Of</td>
-<td><a href="../Release/">Release</a>, <a href="../SourceVersion/">SourceVersion</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td>Slot URI</td>
@@ -629,7 +624,9 @@ Alias: id</p>
 <h2 id="linkml-source">LinkML Source</h2>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A CURIE or URI identifier.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A CURIE or URI identifier for this Release — the kozahub repo name for</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">an ingest build (e.g. &quot;hgnc-ingest&quot;), an INFORES CURIE for a leaf upstream (e.g.</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">&quot;infores:hgnc&quot;), or a build name for a composite (e.g. &quot;monarch-kg&quot;, &quot;kg-phenio&quot;).</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:identifier</span>
@@ -637,7 +634,6 @@ Alias: id</p>
 <span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
 <span class="nt">domain_of</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uriorcurie</span>
 <span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>

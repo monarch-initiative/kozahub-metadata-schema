@@ -513,7 +513,7 @@
 
 
 <h1 id="slot-version_method">Slot: version_method</h1>
-<p><em>How the version was determined — an audit trail. Examples include "url_path", "http_last_modified", "github_release_api", "gaf_header", "rest_info_api", "github_branch_head".</em></p>
+<p><em>How the version was determined — an audit trail. Examples include "url_path", "http_last_modified", "github_release_api", "gaf_header", "rest_info_api", "github_branch_head", "owl_version_iri".</em></p>
 <p>URI: <a href="https://w3id.org/monarch/kozahub-metadata/version_method">kozahub_metadata_schema:version_method</a>
 Alias: version_method</p>
 <!-- no inheritance hierarchy -->
@@ -530,17 +530,12 @@ Alias: version_method</p>
 <tbody>
 <tr>
 <td><a href="../MappingVersion/">MappingVersion</a></td>
-<td>A mapping file (typically SSSOM) consumed by this ingest</td>
+<td>A mapping file (typically SSSOM) consumed by this build</td>
 <td>no</td>
 </tr>
 <tr>
 <td><a href="../Release/">Release</a></td>
-<td>A self-describing build receipt — the artifact of one ingest, merge, or compo...</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
-<td>An upstream data source consumed by this ingest, with the version observed at...</td>
+<td>A self-describing build receipt — fully recursive</td>
 <td>no</td>
 </tr>
 </tbody>
@@ -561,7 +556,7 @@ Alias: version_method</p>
 </tr>
 <tr>
 <td>Domain Of</td>
-<td><a href="../Release/">Release</a>, <a href="../SourceVersion/">SourceVersion</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 </tbody>
 </table>
@@ -608,13 +603,13 @@ Alias: version_method</p>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version_method</span>
 <span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">How the version was determined — an audit trail. Examples include &quot;url_path&quot;,</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">&quot;http_last_modified&quot;, &quot;github_release_api&quot;, &quot;gaf_header&quot;, &quot;rest_info_api&quot;, &quot;github_branch_head&quot;.</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">&quot;http_last_modified&quot;, &quot;github_release_api&quot;, &quot;gaf_header&quot;, &quot;rest_info_api&quot;, &quot;github_branch_head&quot;,</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">&quot;owl_version_iri&quot;.</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version_method</span>
 <span class="nt">domain_of</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 </code></pre></div>
 </details>

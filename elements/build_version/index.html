@@ -513,7 +513,7 @@
 
 
 <h1 id="slot-build_version">Slot: build_version</h1>
-<p><em>Composite cache key combining source, source_version, transform_version, and biolink_version. Used to detect whether a re-build is needed.</em></p>
+<p><em>Composite cache key combining id, version, transform_version, and biolink_version. Used to detect whether a re-build is needed.</em></p>
 <p>URI: <a href="https://w3id.org/monarch/kozahub-metadata/build_version">kozahub_metadata_schema:build_version</a>
 Alias: build_version</p>
 <!-- no inheritance hierarchy -->
@@ -529,13 +529,13 @@ Alias: build_version</p>
 </thead>
 <tbody>
 <tr>
-<td><a href="../ReleaseMetadata/">ReleaseMetadata</a></td>
-<td>Release-level metadata for a single kozahub ingest build</td>
+<td><a href="../MappingVersion/">MappingVersion</a></td>
+<td>A mapping file (typically SSSOM) consumed by this build</td>
 <td>no</td>
 </tr>
 <tr>
 <td><a href="../Release/">Release</a></td>
-<td>A self-describing build receipt — the artifact of one ingest, merge, or compo...</td>
+<td>A self-describing build receipt — fully recursive</td>
 <td>no</td>
 </tr>
 </tbody>
@@ -556,7 +556,7 @@ Alias: build_version</p>
 </tr>
 <tr>
 <td>Domain Of</td>
-<td><a href="../Release/">Release</a>, <a href="../ReleaseMetadata/">ReleaseMetadata</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 </tbody>
 </table>
@@ -602,14 +602,13 @@ Alias: build_version</p>
 <h2 id="linkml-source">LinkML Source</h2>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Composite cache key combining source, source_version, transform_version,</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">and biolink_version. Used to detect whether a re-build is needed.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Composite cache key combining id, version, transform_version, and biolink_version.</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">Used to detect whether a re-build is needed.</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
 <span class="nt">domain_of</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
 <span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 </code></pre></div>
 </details>

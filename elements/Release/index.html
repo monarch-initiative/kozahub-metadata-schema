@@ -202,6 +202,15 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="#inheritance">
+<span class="md-ellipsis">
+      
+        Inheritance
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#class-properties">
 <span class="md-ellipsis">
       
@@ -298,12 +307,15 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <h1 id="class-release">Class: Release</h1>
-<p><em>A self-describing build receipt — the artifact of one ingest, merge, or composite build. Recursive: each <code>Release</code> may declare nested <code>sources</code> that are themselves <code>Release</code> records. A leaf source (an external dataset) is a <code>Release</code> with no nested <code>sources</code> and no <code>artifacts</code>/<code>tools</code>. A consumer build (e.g. monarch-kg) is a <code>Release</code> whose <code>sources</code> are the per-ingest builds it consumed.</em></p>
-<p><em>Aggregators emitting this shape rename per-ingest fields when nesting: a per-ingest <code>release-metadata.yaml</code> (which uses <code>source</code>/<code>source_version</code> at the top level) becomes a nested <code>Release</code> with <code>id</code> set to the ingest name and <code>version</code> set to its <code>source_version</code>.</em></p>
+<p><em>A self-describing build receipt — fully recursive. The same shape represents a leaf upstream dataset, a per-ingest build, and a composite/aggregator build (e.g. kg-phenio, monarch-kg). A leaf upstream is a <code>Release</code> with no <code>sources</code> and no <code>artifacts</code>/<code>tools</code>; a per-ingest build is a <code>Release</code> whose <code>sources</code> are leaf upstreams; a composite is a <code>Release</code> whose <code>sources</code> are themselves per-ingest or composite <code>Release</code>s.</em></p>
+<p><em>Convention: set <code>generated_at</code> on the outermost (root) Release of an emitted document. Nested <code>Release</code>s use <code>retrieved_at</code> to record when the parent fetched them.</em></p>
 <p>URI: <a href="http://schema.org/Dataset">schema:Dataset</a></p>
 <pre class="mermaid"><code> classDiagram
     class Release
     click Release href "../Release/"
+      Release &lt;|-- MappingVersion
+        click MappingVersion href "../MappingVersion/"
+
       Release : artifacts
 
 
@@ -323,7 +335,20 @@
 
       Release : id
 
+      Release : mappings
+
+
+
+
+
+        Release --&gt; "*" MappingVersion : mappings
+        click MappingVersion href "../MappingVersion/"
+
+
+
       Release : name
+
+      Release : release_version
 
       Release : retrieved_at
 
@@ -358,7 +383,13 @@
       Release : version_method
 
 </code></pre>
-<!-- no inheritance hierarchy -->
+<h2 id="inheritance">Inheritance</h2>
+<ul>
+<li><strong>Release</strong><ul>
+<li><a href="../MappingVersion/">MappingVersion</a></li>
+</ul>
+</li>
+</ul>
 <h2 id="class-properties">Class Properties</h2>
 <table>
 <thead>
@@ -371,6 +402,10 @@
 <tr>
 <td>Class URI</td>
 <td><a href="http://schema.org/Dataset">schema:Dataset</a></td>
+</tr>
+<tr>
+<td>Tree Root</td>
+<td>Yes</td>
 </tr>
 </tbody>
 </table>
@@ -388,7 +423,7 @@
 <tr>
 <td><a href="../id/">id</a></td>
 <td>1 <br/> <a href="../Uriorcurie/">Uriorcurie</a></td>
-<td>A CURIE or URI identifier</td>
+<td>A CURIE or URI identifier for this Release — the kozahub repo name for an ing...</td>
 <td>direct</td>
 </tr>
 <tr>
@@ -400,7 +435,7 @@
 <tr>
 <td><a href="../version/">version</a></td>
 <td>0..1 <br/> <a href="../String/">String</a></td>
-<td>A version label as reported by the source</td>
+<td>The version of this Release as reported by its source — an upstream data vers...</td>
 <td>direct</td>
 </tr>
 <tr>
@@ -412,19 +447,13 @@
 <tr>
 <td><a href="../retrieved_at/">retrieved_at</a></td>
 <td>0..1 <br/> <a href="../Datetime/">Datetime</a></td>
-<td>Timestamp at which this source was retrieved</td>
+<td>Timestamp at which this Release was retrieved by its parent</td>
 <td>direct</td>
 </tr>
 <tr>
 <td><a href="../urls/">urls</a></td>
 <td>* <br/> <a href="../Uri/">Uri</a></td>
 <td>One or more URLs from which this source was fetched</td>
-<td>direct</td>
-</tr>
-<tr>
-<td><a href="../build_version/">build_version</a></td>
-<td>0..1 <br/> <a href="../String/">String</a></td>
-<td>Composite cache key combining source, source_version, transform_version, and ...</td>
 <td>direct</td>
 </tr>
 <tr>
@@ -446,9 +475,27 @@
 <td>direct</td>
 </tr>
 <tr>
+<td><a href="../release_version/">release_version</a></td>
+<td>0..1 <br/> <a href="../String/">String</a></td>
+<td>GitHub release tag for this build's artifacts</td>
+<td>direct</td>
+</tr>
+<tr>
+<td><a href="../build_version/">build_version</a></td>
+<td>0..1 <br/> <a href="../String/">String</a></td>
+<td>Composite cache key combining id, version, transform_version, and biolink_ver...</td>
+<td>direct</td>
+</tr>
+<tr>
 <td><a href="../sources/">sources</a></td>
 <td>* <br/> <a href="./">Release</a></td>
-<td>Upstream data sources consumed by this ingest</td>
+<td>Upstream data sources or builds consumed by this Release</td>
+<td>direct</td>
+</tr>
+<tr>
+<td><a href="../mappings/">mappings</a></td>
+<td>* <br/> <a href="../MappingVersion/">MappingVersion</a></td>
+<td>Mapping files (typically SSSOM) consumed by this build</td>
 <td>direct</td>
 </tr>
 <tr>
@@ -482,6 +529,12 @@
 <td>range</td>
 <td><a href="./">Release</a></td>
 </tr>
+<tr>
+<td><a href="../MappingVersion/">MappingVersion</a></td>
+<td><a href="../sources/">sources</a></td>
+<td>range</td>
+<td><a href="./">Release</a></td>
+</tr>
 </tbody>
 </table>
 <h2 id="identifier-and-mapping-information">Identifier and Mapping Information</h2>
@@ -507,6 +560,10 @@
 <td>kozahub_metadata_schema:Release</td>
 </tr>
 <tr>
+<td>exact</td>
+<td>schema:Dataset</td>
+</tr>
+<tr>
 <td>close</td>
 <td>cr:Dataset, prov:Entity</td>
 </tr>
@@ -517,17 +574,18 @@
 <h3 id="direct">Direct</h3>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">'A</span><span class="nv"> </span><span class="s">self-describing</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">receipt</span><span class="nv"> </span><span class="s">—</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">artifact</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">one</span><span class="nv"> </span><span class="s">ingest,</span><span class="nv"> </span><span class="s">merge,</span>
-<span class="w">  </span><span class="s">or</span><span class="nv"> </span><span class="s">composite</span><span class="nv"> </span><span class="s">build.</span><span class="nv"> </span><span class="s">Recursive:</span><span class="nv"> </span><span class="s">each</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">may</span><span class="nv"> </span><span class="s">declare</span><span class="nv"> </span><span class="s">nested</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">that</span>
-<span class="w">  </span><span class="s">are</span><span class="nv"> </span><span class="s">themselves</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">records.</span><span class="nv"> </span><span class="s">A</span><span class="nv"> </span><span class="s">leaf</span><span class="nv"> </span><span class="s">source</span><span class="nv"> </span><span class="s">(an</span><span class="nv"> </span><span class="s">external</span><span class="nv"> </span><span class="s">dataset)</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span>
-<span class="w">  </span><span class="s">with</span><span class="nv"> </span><span class="s">no</span><span class="nv"> </span><span class="s">nested</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">no</span><span class="nv"> </span><span class="s">`artifacts`/`tools`.</span><span class="nv"> </span><span class="s">A</span><span class="nv"> </span><span class="s">consumer</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">(e.g.</span><span class="nv"> </span><span class="s">monarch-kg)</span>
-<span class="w">  </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">whose</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">builds</span><span class="nv"> </span><span class="s">it</span><span class="nv"> </span><span class="s">consumed.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">'A</span><span class="nv"> </span><span class="s">self-describing</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">receipt</span><span class="nv"> </span><span class="s">—</span><span class="nv"> </span><span class="s">fully</span><span class="nv"> </span><span class="s">recursive.</span><span class="nv"> </span><span class="s">The</span><span class="nv"> </span><span class="s">same</span><span class="nv"> </span><span class="s">shape</span><span class="nv"> </span><span class="s">represents</span>
+<span class="w">  </span><span class="s">a</span><span class="nv"> </span><span class="s">leaf</span><span class="nv"> </span><span class="s">upstream</span><span class="nv"> </span><span class="s">dataset,</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">build,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">composite/aggregator</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">(e.g.</span>
+<span class="w">  </span><span class="s">kg-phenio,</span><span class="nv"> </span><span class="s">monarch-kg).</span><span class="nv"> </span><span class="s">A</span><span class="nv"> </span><span class="s">leaf</span><span class="nv"> </span><span class="s">upstream</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">no</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">no</span>
+<span class="w">  </span><span class="s">`artifacts`/`tools`;</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">whose</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">leaf</span>
+<span class="w">  </span><span class="s">upstreams;</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">composite</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">whose</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">themselves</span><span class="nv"> </span><span class="s">per-ingest</span>
+<span class="w">  </span><span class="s">or</span><span class="nv"> </span><span class="s">composite</span><span class="nv"> </span><span class="s">`Release`s.</span>
 
-<span class="w">  </span><span class="s">Aggregators</span><span class="nv"> </span><span class="s">emitting</span><span class="nv"> </span><span class="s">this</span><span class="nv"> </span><span class="s">shape</span><span class="nv"> </span><span class="s">rename</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">fields</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">nesting:</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">per-ingest</span>
-<span class="w">  </span><span class="s">`release-metadata.yaml`</span><span class="nv"> </span><span class="s">(which</span><span class="nv"> </span><span class="s">uses</span><span class="nv"> </span><span class="s">`source`/`source_version`</span><span class="nv"> </span><span class="s">at</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">top</span><span class="nv"> </span><span class="s">level)</span>
-<span class="w">  </span><span class="s">becomes</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">nested</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">`id`</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">ingest</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">`version`</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">to</span>
-<span class="w">  </span><span class="s">its</span><span class="nv"> </span><span class="s">`source_version`.'</span>
+<span class="w">  </span><span class="s">Convention:</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">`generated_at`</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">outermost</span><span class="nv"> </span><span class="s">(root)</span><span class="nv"> </span><span class="s">Release</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">emitted</span><span class="nv"> </span><span class="s">document.</span>
+<span class="w">  </span><span class="s">Nested</span><span class="nv"> </span><span class="s">`Release`s</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">`retrieved_at`</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">record</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">parent</span><span class="nv"> </span><span class="s">fetched</span><span class="nv"> </span><span class="s">them.'</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="nt">exact_mappings</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:Dataset</span>
 <span class="nt">close_mappings</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cr:Dataset</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prov:Entity</span>
@@ -538,51 +596,43 @@
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version_method</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">retrieved_at</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">urls</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generated_at</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transform_version</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink_version</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release_version</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mappings</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifacts</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tools</span>
-<span class="nt">slot_usage</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">id</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">  </span><span class="nt">sources</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
-<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="nt">class_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:Dataset</span>
+<span class="nt">tree_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </details>
 <h3 id="induced">Induced</h3>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">'A</span><span class="nv"> </span><span class="s">self-describing</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">receipt</span><span class="nv"> </span><span class="s">—</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">artifact</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">one</span><span class="nv"> </span><span class="s">ingest,</span><span class="nv"> </span><span class="s">merge,</span>
-<span class="w">  </span><span class="s">or</span><span class="nv"> </span><span class="s">composite</span><span class="nv"> </span><span class="s">build.</span><span class="nv"> </span><span class="s">Recursive:</span><span class="nv"> </span><span class="s">each</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">may</span><span class="nv"> </span><span class="s">declare</span><span class="nv"> </span><span class="s">nested</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">that</span>
-<span class="w">  </span><span class="s">are</span><span class="nv"> </span><span class="s">themselves</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">records.</span><span class="nv"> </span><span class="s">A</span><span class="nv"> </span><span class="s">leaf</span><span class="nv"> </span><span class="s">source</span><span class="nv"> </span><span class="s">(an</span><span class="nv"> </span><span class="s">external</span><span class="nv"> </span><span class="s">dataset)</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span>
-<span class="w">  </span><span class="s">with</span><span class="nv"> </span><span class="s">no</span><span class="nv"> </span><span class="s">nested</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">no</span><span class="nv"> </span><span class="s">`artifacts`/`tools`.</span><span class="nv"> </span><span class="s">A</span><span class="nv"> </span><span class="s">consumer</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">(e.g.</span><span class="nv"> </span><span class="s">monarch-kg)</span>
-<span class="w">  </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">whose</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">builds</span><span class="nv"> </span><span class="s">it</span><span class="nv"> </span><span class="s">consumed.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">'A</span><span class="nv"> </span><span class="s">self-describing</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">receipt</span><span class="nv"> </span><span class="s">—</span><span class="nv"> </span><span class="s">fully</span><span class="nv"> </span><span class="s">recursive.</span><span class="nv"> </span><span class="s">The</span><span class="nv"> </span><span class="s">same</span><span class="nv"> </span><span class="s">shape</span><span class="nv"> </span><span class="s">represents</span>
+<span class="w">  </span><span class="s">a</span><span class="nv"> </span><span class="s">leaf</span><span class="nv"> </span><span class="s">upstream</span><span class="nv"> </span><span class="s">dataset,</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">build,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">composite/aggregator</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">(e.g.</span>
+<span class="w">  </span><span class="s">kg-phenio,</span><span class="nv"> </span><span class="s">monarch-kg).</span><span class="nv"> </span><span class="s">A</span><span class="nv"> </span><span class="s">leaf</span><span class="nv"> </span><span class="s">upstream</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">no</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">no</span>
+<span class="w">  </span><span class="s">`artifacts`/`tools`;</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">build</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">whose</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">leaf</span>
+<span class="w">  </span><span class="s">upstreams;</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">composite</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">whose</span><span class="nv"> </span><span class="s">`sources`</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">themselves</span><span class="nv"> </span><span class="s">per-ingest</span>
+<span class="w">  </span><span class="s">or</span><span class="nv"> </span><span class="s">composite</span><span class="nv"> </span><span class="s">`Release`s.</span>
 
-<span class="w">  </span><span class="s">Aggregators</span><span class="nv"> </span><span class="s">emitting</span><span class="nv"> </span><span class="s">this</span><span class="nv"> </span><span class="s">shape</span><span class="nv"> </span><span class="s">rename</span><span class="nv"> </span><span class="s">per-ingest</span><span class="nv"> </span><span class="s">fields</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">nesting:</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">per-ingest</span>
-<span class="w">  </span><span class="s">`release-metadata.yaml`</span><span class="nv"> </span><span class="s">(which</span><span class="nv"> </span><span class="s">uses</span><span class="nv"> </span><span class="s">`source`/`source_version`</span><span class="nv"> </span><span class="s">at</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">top</span><span class="nv"> </span><span class="s">level)</span>
-<span class="w">  </span><span class="s">becomes</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">nested</span><span class="nv"> </span><span class="s">`Release`</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">`id`</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">ingest</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">`version`</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">to</span>
-<span class="w">  </span><span class="s">its</span><span class="nv"> </span><span class="s">`source_version`.'</span>
+<span class="w">  </span><span class="s">Convention:</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">`generated_at`</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">outermost</span><span class="nv"> </span><span class="s">(root)</span><span class="nv"> </span><span class="s">Release</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">emitted</span><span class="nv"> </span><span class="s">document.</span>
+<span class="w">  </span><span class="s">Nested</span><span class="nv"> </span><span class="s">`Release`s</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">`retrieved_at`</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">record</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">parent</span><span class="nv"> </span><span class="s">fetched</span><span class="nv"> </span><span class="s">them.'</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="nt">exact_mappings</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:Dataset</span>
 <span class="nt">close_mappings</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cr:Dataset</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prov:Entity</span>
-<span class="nt">slot_usage</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">id</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">  </span><span class="nt">sources</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
-<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="nt">attributes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">id</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A CURIE or URI identifier.</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A CURIE or URI identifier for this Release — the kozahub repo name</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">for an ingest build (e.g. "hgnc-ingest"), an INFORES CURIE for a leaf upstream</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">(e.g. "infores:hgnc"), or a build name for a composite (e.g. "monarch-kg", "kg-phenio").</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:identifier</span>
@@ -591,7 +641,6 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uriorcurie</span>
 <span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span>
@@ -604,11 +653,12 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">version</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A version label as reported by the source.</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The version of this Release as reported by its source — an upstream</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">data version for a leaf, the source data version for a per-ingest build, or</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">a composite cache key for a composite build.</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:version</span>
@@ -616,37 +666,36 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">version_method</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version_method</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">How the version was determined — an audit trail. Examples include</span>
 <span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">"url_path", "http_last_modified", "github_release_api", "gaf_header", "rest_info_api",</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">"github_branch_head".</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">"github_branch_head", "owl_version_iri".</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version_method</span>
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">retrieved_at</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">retrieved_at</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this source was retrieved.</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this Release was retrieved by its parent. Used</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">on nested Releases (i.e. members of a parent's `sources`); the outermost Release</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">uses `generated_at` instead.</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">retrieved_at</span>
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">datetime</span>
 <span class="w">  </span><span class="nt">urls</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">urls</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">One or more URLs from which this source was fetched. Multi-file releases</span>
 <span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">(e.g. Alliance, STRING, BGee with per-species files) should list every URL retrieved</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">under a single SourceVersion sharing one logical version.</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">under a single Release sharing one logical version.</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:url</span>
@@ -654,24 +703,12 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uri</span>
 <span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">  </span><span class="nt">build_version</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Composite cache key combining source, source_version, transform_version,</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">and biolink_version. Used to detect whether a re-build is needed.</span>
-<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
-<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
-<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
-<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
-<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">generated_at</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generated_at</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this metadata record was emitted.</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this metadata record was emitted. Set on the outermost</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">(root) Release of a document; nested Releases use `retrieved_at` instead.</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:dateCreated</span>
@@ -679,7 +716,6 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">datetime</span>
 <span class="w">  </span><span class="nt">transform_version</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transform_version</span>
@@ -692,7 +728,6 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">biolink_version</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink_version</span>
@@ -703,11 +738,32 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">release_version</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release_version</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GitHub release tag for this build's artifacts.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:version</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release_version</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">build_version</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Composite cache key combining id, version, transform_version, and</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">biolink_version. Used to detect whether a re-build is needed.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">sources</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upstream data sources consumed by this ingest.</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upstream data sources or builds consumed by this Release.</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">exact_mappings</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:isBasedOn</span>
@@ -719,8 +775,21 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">inlined_as_list</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">mappings</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mappings</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mapping files (typically SSSOM) consumed by this build. Tracked independently</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">from `sources` — version mismatches across ingests for the same mapping are</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">warnings, not build failures.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mappings</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
 <span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">inlined_as_list</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
@@ -733,7 +802,6 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Artifact</span>
 <span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">inlined_as_list</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
@@ -746,9 +814,9 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ToolVersions</span>
 <span class="nt">class_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:Dataset</span>
+<span class="nt">tree_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </details>
 </article>

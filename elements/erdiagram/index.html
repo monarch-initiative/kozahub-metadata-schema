@@ -217,7 +217,12 @@ MappingVersion {
     uriorcurie mapping_set_id  
     uriorcurie id  
     string name  
+    string biolink_version  
+    string build_version  
+    datetime generated_at  
+    string release_version  
     datetime retrieved_at  
+    string transform_version  
     uriList urls  
     string version  
     string version_method  
@@ -228,25 +233,9 @@ Release {
     string biolink_version  
     string build_version  
     datetime generated_at  
-    datetime retrieved_at  
-    string transform_version  
-    uriList urls  
-    string version  
-    string version_method  
-}
-ReleaseMetadata {
-    string biolink_version  
-    string build_version  
-    datetime generated_at  
     string release_version  
-    string source  
-    string source_version  
-    string transform_version  
-}
-SourceVersion {
-    uriorcurie id  
-    string name  
     datetime retrieved_at  
+    string transform_version  
     uriList urls  
     string version  
     string version_method  
@@ -257,13 +246,14 @@ ToolVersions {
     string koza  
 }
 
+MappingVersion ||--|o ToolVersions : "tools"
+MappingVersion ||--}o Artifact : "artifacts"
+MappingVersion ||--}o MappingVersion : "mappings"
+MappingVersion ||--}o Release : "sources"
 Release ||--|o ToolVersions : "tools"
 Release ||--}o Artifact : "artifacts"
+Release ||--}o MappingVersion : "mappings"
 Release ||--}o Release : "sources"
-ReleaseMetadata ||--|o ToolVersions : "tools"
-ReleaseMetadata ||--}o Artifact : "artifacts"
-ReleaseMetadata ||--}o MappingVersion : "mappings"
-ReleaseMetadata ||--}o SourceVersion : "sources"
 </code></pre>
 </article>
 </div>

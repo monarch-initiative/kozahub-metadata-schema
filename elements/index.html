@@ -596,19 +596,11 @@ can choose their preferred view.</p>
 </tr>
 <tr>
 <td><a href="Release/">Release</a></td>
-<td>A self-describing build receipt — the artifact of one ingest, merge, or compo...</td>
-</tr>
-<tr>
-<td><a href="ReleaseMetadata/">ReleaseMetadata</a></td>
-<td>Release-level metadata for a single kozahub ingest build</td>
-</tr>
-<tr>
-<td><a href="SourceVersion/">SourceVersion</a></td>
-<td>An upstream data source consumed by this ingest, with the version observed at...</td>
+<td>A self-describing build receipt — fully recursive</td>
 </tr>
 <tr>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MappingVersion/">MappingVersion</a></td>
-<td>A mapping file (typically SSSOM) consumed by this ingest</td>
+<td>A mapping file (typically SSSOM) consumed by this build</td>
 </tr>
 <tr>
 <td><a href="ToolVersions/">ToolVersions</a></td>
@@ -639,7 +631,7 @@ can choose their preferred view.</p>
 </tr>
 <tr>
 <td><a href="build_version/">build_version</a></td>
-<td>Composite cache key combining source, source_version, transform_version, and ...</td>
+<td>Composite cache key combining id, version, transform_version, and biolink_ver...</td>
 </tr>
 <tr>
 <td><a href="format/">format</a></td>
@@ -651,7 +643,7 @@ can choose their preferred view.</p>
 </tr>
 <tr>
 <td><a href="id/">id</a></td>
-<td>A CURIE or URI identifier</td>
+<td>A CURIE or URI identifier for this Release — the kozahub repo name for an ing...</td>
 </tr>
 <tr>
 <td><a href="kghub_downloader/">kghub_downloader</a></td>
@@ -687,23 +679,15 @@ can choose their preferred view.</p>
 </tr>
 <tr>
 <td><a href="retrieved_at/">retrieved_at</a></td>
-<td>Timestamp at which this source was retrieved</td>
+<td>Timestamp at which this Release was retrieved by its parent</td>
 </tr>
 <tr>
 <td><a href="sha256/">sha256</a></td>
 <td>Hex-encoded SHA-256 checksum of the artifact</td>
 </tr>
 <tr>
-<td><a href="source/">source</a></td>
-<td>The ingest's identifier — typically the kozahub repo name</td>
-</tr>
-<tr>
-<td><a href="source_version/">source_version</a></td>
-<td>The version reported by the upstream source</td>
-</tr>
-<tr>
 <td><a href="sources/">sources</a></td>
-<td>Upstream data sources consumed by this ingest</td>
+<td>Upstream data sources or builds consumed by this Release</td>
 </tr>
 <tr>
 <td><a href="tools/">tools</a></td>
@@ -719,7 +703,7 @@ can choose their preferred view.</p>
 </tr>
 <tr>
 <td><a href="version/">version</a></td>
-<td>A version label as reported by the source</td>
+<td>The version of this Release as reported by its source — an upstream data vers...</td>
 </tr>
 <tr>
 <td><a href="version_method/">version_method</a></td>

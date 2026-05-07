@@ -298,13 +298,30 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <h1 id="class-mappingversion">Class: MappingVersion</h1>
-<p><em>A mapping file (typically SSSOM) consumed by this ingest. Distinct from a primary upstream <code>SourceVersion</code> because mapping versions have looser correctness implications — divergent mapping versions across contributing ingests are typically informational rather than build-breaking. Populated primarily by the merging layer (e.g. monarch-ingest) where mappings are applied to rewire IDs; individual ingests that consume mapping files for label-lookup or similar non-rewiring purposes generally need not populate this.</em></p>
+<p><em>A mapping file (typically SSSOM) consumed by this build. Distinct from a primary upstream <code>Release</code> listed in <code>sources</code> because mapping versions have looser correctness implications — divergent mapping versions across contributing ingests are typically informational rather than build-breaking. Populated primarily by the merging layer (e.g. monarch-ingest) where mappings are applied to rewire IDs; individual ingests that consume mapping files for label-lookup or similar non-rewiring purposes generally need not populate this.</em></p>
 <p>URI: <a href="https://w3id.org/monarch/kozahub-metadata/MappingVersion">kozahub_metadata_schema:MappingVersion</a></p>
 <pre class="mermaid"><code> classDiagram
     class MappingVersion
     click MappingVersion href "../MappingVersion/"
-      SourceVersion &lt;|-- MappingVersion
-        click SourceVersion href "../SourceVersion/"
+      Release &lt;|-- MappingVersion
+        click Release href "../Release/"
+
+      MappingVersion : artifacts
+
+
+
+
+
+        MappingVersion --&gt; "*" Artifact : artifacts
+        click Artifact href "../Artifact/"
+
+
+
+      MappingVersion : biolink_version
+
+      MappingVersion : build_version
+
+      MappingVersion : generated_at
 
       MappingVersion : id
 
@@ -312,9 +329,46 @@
 
       MappingVersion : mapping_set_id
 
+      MappingVersion : mappings
+
+
+
+
+
+        MappingVersion --&gt; "*" MappingVersion : mappings
+        click MappingVersion href "../MappingVersion/"
+
+
+
       MappingVersion : name
 
+      MappingVersion : release_version
+
       MappingVersion : retrieved_at
+
+      MappingVersion : sources
+
+
+
+
+
+        MappingVersion --&gt; "*" Release : sources
+        click Release href "../Release/"
+
+
+
+      MappingVersion : tools
+
+
+
+
+
+        MappingVersion --&gt; "0..1" ToolVersions : tools
+        click ToolVersions href "../ToolVersions/"
+
+
+
+      MappingVersion : transform_version
 
       MappingVersion : urls
 
@@ -325,7 +379,7 @@
 </code></pre>
 <h2 id="inheritance">Inheritance</h2>
 <ul>
-<li><a href="../SourceVersion/">SourceVersion</a><ul>
+<li><a href="../Release/">Release</a><ul>
 <li><strong>MappingVersion</strong></li>
 </ul>
 </li>
@@ -356,38 +410,92 @@
 <tr>
 <td><a href="../id/">id</a></td>
 <td>1 <br/> <a href="../Uriorcurie/">Uriorcurie</a></td>
-<td>INFORES CURIE identifying the source (e</td>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
+<td>A CURIE or URI identifier for this Release — the kozahub repo name for an ing...</td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td><a href="../name/">name</a></td>
 <td>0..1 <br/> <a href="../String/">String</a></td>
 <td>A human-readable name</td>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
-</tr>
-<tr>
-<td><a href="../urls/">urls</a></td>
-<td>1..* <br/> <a href="../Uri/">Uri</a></td>
-<td>One or more URLs from which this source was fetched</td>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td><a href="../version/">version</a></td>
 <td>0..1 <br/> <a href="../String/">String</a></td>
-<td>A version label as reported by the source</td>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
+<td>The version of this Release as reported by its source — an upstream data vers...</td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td><a href="../version_method/">version_method</a></td>
 <td>0..1 <br/> <a href="../String/">String</a></td>
 <td>How the version was determined — an audit trail</td>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td><a href="../retrieved_at/">retrieved_at</a></td>
 <td>0..1 <br/> <a href="../Datetime/">Datetime</a></td>
-<td>Timestamp at which this source was retrieved</td>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
+<td>Timestamp at which this Release was retrieved by its parent</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../urls/">urls</a></td>
+<td>* <br/> <a href="../Uri/">Uri</a></td>
+<td>One or more URLs from which this source was fetched</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../generated_at/">generated_at</a></td>
+<td>0..1 <br/> <a href="../Datetime/">Datetime</a></td>
+<td>Timestamp at which this metadata record was emitted</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../transform_version/">transform_version</a></td>
+<td>0..1 <br/> <a href="../String/">String</a></td>
+<td>Content hash (e</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../biolink_version/">biolink_version</a></td>
+<td>0..1 <br/> <a href="../String/">String</a></td>
+<td>Version of the Biolink Model used</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../release_version/">release_version</a></td>
+<td>0..1 <br/> <a href="../String/">String</a></td>
+<td>GitHub release tag for this build's artifacts</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../build_version/">build_version</a></td>
+<td>0..1 <br/> <a href="../String/">String</a></td>
+<td>Composite cache key combining id, version, transform_version, and biolink_ver...</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../sources/">sources</a></td>
+<td>* <br/> <a href="../Release/">Release</a></td>
+<td>Upstream data sources or builds consumed by this Release</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../mappings/">mappings</a></td>
+<td>* <br/> <a href="./">MappingVersion</a></td>
+<td>Mapping files (typically SSSOM) consumed by this build</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../artifacts/">artifacts</a></td>
+<td>* <br/> <a href="../Artifact/">Artifact</a></td>
+<td>Files produced by this ingest run</td>
+<td><a href="../Release/">Release</a></td>
+</tr>
+<tr>
+<td><a href="../tools/">tools</a></td>
+<td>0..1 <br/> <a href="../ToolVersions/">ToolVersions</a></td>
+<td>Versions of build-time tools</td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 </tbody>
 </table>
@@ -403,7 +511,13 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="../ReleaseMetadata/">ReleaseMetadata</a></td>
+<td><a href="../Release/">Release</a></td>
+<td><a href="../mappings/">mappings</a></td>
+<td>range</td>
+<td><a href="./">MappingVersion</a></td>
+</tr>
+<tr>
+<td><a href="./">MappingVersion</a></td>
 <td><a href="../mappings/">mappings</a></td>
 <td>range</td>
 <td><a href="./">MappingVersion</a></td>
@@ -443,17 +557,17 @@
 <h3 id="direct">Direct</h3>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A mapping file (typically SSSOM) consumed by this ingest. Distinct from</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">a primary upstream `SourceVersion` because mapping versions have looser correctness</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">implications — divergent mapping versions across contributing ingests are typically</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">informational rather than build-breaking. Populated primarily by the merging layer</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">(e.g. monarch-ingest) where mappings are applied to rewire IDs; individual ingests</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">that consume mapping files for label-lookup or similar non-rewiring purposes generally</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">need not populate this.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A mapping file (typically SSSOM) consumed by this build. Distinct from</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">a primary upstream `Release` listed in `sources` because mapping versions have looser</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">correctness implications — divergent mapping versions across contributing ingests</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">are typically informational rather than build-breaking. Populated primarily by the</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">merging layer (e.g. monarch-ingest) where mappings are applied to rewire IDs; individual</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ingests that consume mapping files for label-lookup or similar non-rewiring purposes</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">generally need not populate this.</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="nt">close_mappings</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SSSOM:MappingSet</span>
-<span class="nt">is_a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
+<span class="nt">is_a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="nt">slots</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mapping_set_id</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">license</span>
@@ -462,17 +576,17 @@
 <h3 id="induced">Induced</h3>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A mapping file (typically SSSOM) consumed by this ingest. Distinct from</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">a primary upstream `SourceVersion` because mapping versions have looser correctness</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">implications — divergent mapping versions across contributing ingests are typically</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">informational rather than build-breaking. Populated primarily by the merging layer</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">(e.g. monarch-ingest) where mappings are applied to rewire IDs; individual ingests</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">that consume mapping files for label-lookup or similar non-rewiring purposes generally</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">need not populate this.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A mapping file (typically SSSOM) consumed by this build. Distinct from</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">a primary upstream `Release` listed in `sources` because mapping versions have looser</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">correctness implications — divergent mapping versions across contributing ingests</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">are typically informational rather than build-breaking. Populated primarily by the</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">merging layer (e.g. monarch-ingest) where mappings are applied to rewire IDs; individual</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ingests that consume mapping files for label-lookup or similar non-rewiring purposes</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">generally need not populate this.</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="nt">close_mappings</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SSSOM:MappingSet</span>
-<span class="nt">is_a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
+<span class="nt">is_a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="nt">attributes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">mapping_set_id</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mapping_set_id</span>
@@ -500,7 +614,9 @@
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">id</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INFORES CURIE identifying the source (e.g. "infores:hgnc").</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A CURIE or URI identifier for this Release — the kozahub repo name</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">for an ingest build (e.g. "hgnc-ingest"), an INFORES CURIE for a leaf upstream</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">(e.g. "infores:hgnc"), or a build name for a composite (e.g. "monarch-kg", "kg-phenio").</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:identifier</span>
@@ -509,7 +625,6 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uriorcurie</span>
 <span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span>
@@ -522,27 +637,12 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
-<span class="w">  </span><span class="nt">urls</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">urls</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">One or more URLs from which this source was fetched. Multi-file releases</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">(e.g. Alliance, STRING, BGee with per-species files) should list every URL retrieved</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">under a single SourceVersion sharing one logical version.</span>
-<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
-<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
-<span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:url</span>
-<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">urls</span>
-<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
-<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
-<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uri</span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">version</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A version label as reported by the source.</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The version of this Release as reported by its source — an upstream</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">data version for a leaf, the source data version for a per-ingest build, or</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">a composite cache key for a composite build.</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:version</span>
@@ -550,32 +650,158 @@
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">version_method</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version_method</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">How the version was determined — an audit trail. Examples include</span>
 <span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">"url_path", "http_last_modified", "github_release_api", "gaf_header", "rest_info_api",</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">"github_branch_head".</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">"github_branch_head", "owl_version_iri".</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version_method</span>
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 <span class="w">  </span><span class="nt">retrieved_at</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">retrieved_at</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this source was retrieved.</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this Release was retrieved by its parent. Used</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">on nested Releases (i.e. members of a parent's `sources`); the outermost Release</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">uses `generated_at` instead.</span>
 <span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">retrieved_at</span>
 <span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
 <span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
 <span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">datetime</span>
+<span class="w">  </span><span class="nt">urls</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">urls</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">One or more URLs from which this source was fetched. Multi-file releases</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">(e.g. Alliance, STRING, BGee with per-species files) should list every URL retrieved</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">under a single Release sharing one logical version.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:url</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">urls</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uri</span>
+<span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">generated_at</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generated_at</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this metadata record was emitted. Set on the outermost</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">(root) Release of a document; nested Releases use `retrieved_at` instead.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:dateCreated</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generated_at</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">datetime</span>
+<span class="w">  </span><span class="nt">transform_version</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transform_version</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Content hash (e.g. first 8 chars of sha256) of the ingest's transform</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">code — its .py files plus the ingest yaml. Changes precisely when the ingest's</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">code changes; stable across no-op commits.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transform_version</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">biolink_version</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink_version</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Version of the Biolink Model used.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink_version</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">release_version</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release_version</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GitHub release tag for this build's artifacts.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:version</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release_version</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">build_version</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Composite cache key combining id, version, transform_version, and</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">biolink_version. Used to detect whether a re-build is needed.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build_version</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">sources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upstream data sources or builds consumed by this Release.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">exact_mappings</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:isBasedOn</span>
+<span class="w">    </span><span class="nt">close_mappings</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prov:wasDerivedFrom</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:isBasedOn</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">inlined</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">inlined_as_list</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">mappings</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mappings</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mapping files (typically SSSOM) consumed by this build. Tracked independently</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">from `sources` — version mismatches across ingests for the same mapping are</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">warnings, not build failures.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mappings</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">inlined</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">inlined_as_list</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifacts</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Files produced by this ingest run.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:distribution</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifacts</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Artifact</span>
+<span class="w">    </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">inlined</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">inlined_as_list</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">tools</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tools</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Versions of build-time tools.</span>
+<span class="w">    </span><span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
+<span class="w">    </span><span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tools</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MappingVersion</span>
+<span class="w">    </span><span class="nt">domain_of</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">    </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ToolVersions</span>
 </code></pre></div>
 </details>
 </article>

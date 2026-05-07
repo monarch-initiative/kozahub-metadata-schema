@@ -513,7 +513,7 @@
 
 
 <h1 id="slot-sources">Slot: sources</h1>
-<p><em>Upstream data sources consumed by this ingest.</em></p>
+<p><em>Upstream data sources or builds consumed by this Release.</em></p>
 <p>URI: <a href="http://schema.org/isBasedOn">schema:isBasedOn</a>
 Alias: sources</p>
 <!-- no inheritance hierarchy -->
@@ -529,14 +529,14 @@ Alias: sources</p>
 </thead>
 <tbody>
 <tr>
-<td><a href="../ReleaseMetadata/">ReleaseMetadata</a></td>
-<td>Release-level metadata for a single kozahub ingest build</td>
+<td><a href="../MappingVersion/">MappingVersion</a></td>
+<td>A mapping file (typically SSSOM) consumed by this build</td>
 <td>no</td>
 </tr>
 <tr>
 <td><a href="../Release/">Release</a></td>
-<td>A self-describing build receipt — the artifact of one ingest, merge, or compo...</td>
-<td>yes</td>
+<td>A self-describing build receipt — fully recursive</td>
+<td>no</td>
 </tr>
 </tbody>
 </table>
@@ -552,11 +552,11 @@ Alias: sources</p>
 <tbody>
 <tr>
 <td>Range</td>
-<td><a href="../SourceVersion/">SourceVersion</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td>Domain Of</td>
-<td><a href="../Release/">Release</a>, <a href="../ReleaseMetadata/">ReleaseMetadata</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td>Slot URI</td>
@@ -614,7 +614,7 @@ Alias: sources</p>
 <h2 id="linkml-source">LinkML Source</h2>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upstream data sources consumed by this ingest.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upstream data sources or builds consumed by this Release.</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="nt">exact_mappings</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:isBasedOn</span>
@@ -625,8 +625,7 @@ Alias: sources</p>
 <span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sources</span>
 <span class="nt">domain_of</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
-<span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SourceVersion</span>
+<span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
 <span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">inlined</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">inlined_as_list</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>

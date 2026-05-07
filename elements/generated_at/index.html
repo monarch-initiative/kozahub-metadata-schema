@@ -513,7 +513,7 @@
 
 
 <h1 id="slot-generated_at">Slot: generated_at</h1>
-<p><em>Timestamp at which this metadata record was emitted.</em></p>
+<p><em>Timestamp at which this metadata record was emitted. Set on the outermost (root) Release of a document; nested Releases use <code>retrieved_at</code> instead.</em></p>
 <p>URI: <a href="http://schema.org/dateCreated">schema:dateCreated</a>
 Alias: generated_at</p>
 <!-- no inheritance hierarchy -->
@@ -529,13 +529,13 @@ Alias: generated_at</p>
 </thead>
 <tbody>
 <tr>
-<td><a href="../ReleaseMetadata/">ReleaseMetadata</a></td>
-<td>Release-level metadata for a single kozahub ingest build</td>
-<td>yes</td>
+<td><a href="../MappingVersion/">MappingVersion</a></td>
+<td>A mapping file (typically SSSOM) consumed by this build</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="../Release/">Release</a></td>
-<td>A self-describing build receipt — the artifact of one ingest, merge, or compo...</td>
+<td>A self-describing build receipt — fully recursive</td>
 <td>no</td>
 </tr>
 </tbody>
@@ -556,7 +556,7 @@ Alias: generated_at</p>
 </tr>
 <tr>
 <td>Domain Of</td>
-<td><a href="../Release/">Release</a>, <a href="../ReleaseMetadata/">ReleaseMetadata</a></td>
+<td><a href="../Release/">Release</a></td>
 </tr>
 <tr>
 <td>Slot URI</td>
@@ -606,14 +606,14 @@ Alias: generated_at</p>
 <h2 id="linkml-source">LinkML Source</h2>
 <details>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generated_at</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this metadata record was emitted.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Timestamp at which this metadata record was emitted. Set on the outermost</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">(root) Release of a document; nested Releases use `retrieved_at` instead.</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/monarch/kozahub-metadata</span>
 <span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 <span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:dateCreated</span>
 <span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generated_at</span>
 <span class="nt">domain_of</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReleaseMetadata</span>
 <span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">datetime</span>
 </code></pre></div>
 </details>

@@ -315,28 +315,6 @@ types:
     uri: xsd:string
     repr: str
 slots:
-  source:
-    name: source
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/source
-    description: "The ingest's identifier \u2014 typically the kozahub repo name."
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:name
-    slot_uri: schema:name
-    owner: ReleaseMetadata
-    domain_of:
-    - ReleaseMetadata
-    range: string
-  source_version:
-    name: source_version
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/source_version
-    description: The version reported by the upstream source.
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    slot_uri: kozahub_metadata_schema:source_version
-    owner: ReleaseMetadata
-    domain_of:
-    - ReleaseMetadata
-    range: string
   transform_version:
     name: transform_version
     definition_uri: https://w3id.org/monarch/kozahub-metadata/transform_version
@@ -345,10 +323,9 @@ slots:
       \ ingest's code changes; stable across no-op commits."
     from_schema: https://w3id.org/monarch/kozahub-metadata
     slot_uri: kozahub_metadata_schema:transform_version
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
     - Release
-    - ReleaseMetadata
     range: string
   biolink_version:
     name: biolink_version
@@ -356,10 +333,9 @@ slots:
     description: Version of the Biolink Model used.
     from_schema: https://w3id.org/monarch/kozahub-metadata
     slot_uri: kozahub_metadata_schema:biolink_version
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
     - Release
-    - ReleaseMetadata
     range: string
   release_version:
     name: release_version
@@ -369,39 +345,38 @@ slots:
     mappings:
     - schema:version
     slot_uri: schema:version
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
-    - ReleaseMetadata
+    - Release
     range: string
   build_version:
     name: build_version
     definition_uri: https://w3id.org/monarch/kozahub-metadata/build_version
-    description: Composite cache key combining source, source_version, transform_version,
-      and biolink_version. Used to detect whether a re-build is needed.
+    description: Composite cache key combining id, version, transform_version, and
+      biolink_version. Used to detect whether a re-build is needed.
     from_schema: https://w3id.org/monarch/kozahub-metadata
     slot_uri: kozahub_metadata_schema:build_version
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
     - Release
-    - ReleaseMetadata
     range: string
   generated_at:
     name: generated_at
     definition_uri: https://w3id.org/monarch/kozahub-metadata/generated_at
-    description: Timestamp at which this metadata record was emitted.
+    description: Timestamp at which this metadata record was emitted. Set on the outermost
+      (root) Release of a document; nested Releases use `retrieved_at` instead.
     from_schema: https://w3id.org/monarch/kozahub-metadata
     mappings:
     - schema:dateCreated
     slot_uri: schema:dateCreated
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
     - Release
-    - ReleaseMetadata
     range: datetime
   sources:
     name: sources
     definition_uri: https://w3id.org/monarch/kozahub-metadata/sources
-    description: Upstream data sources consumed by this ingest.
+    description: Upstream data sources or builds consumed by this Release.
     from_schema: https://w3id.org/monarch/kozahub-metadata
     mappings:
     - schema:isBasedOn
@@ -410,11 +385,10 @@ slots:
     close_mappings:
     - prov:wasDerivedFrom
     slot_uri: schema:isBasedOn
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
     - Release
-    - ReleaseMetadata
-    range: SourceVersion
+    range: Release
     multivalued: true
     inlined: true
     inlined_as_list: true
@@ -426,9 +400,9 @@ slots:
       \ the same mapping are warnings, not build failures."
     from_schema: https://w3id.org/monarch/kozahub-metadata
     slot_uri: kozahub_metadata_schema:mappings
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
-    - ReleaseMetadata
+    - Release
     range: MappingVersion
     multivalued: true
     inlined: true
@@ -467,10 +441,9 @@ slots:
     mappings:
     - schema:distribution
     slot_uri: schema:distribution
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
     - Release
-    - ReleaseMetadata
     range: Artifact
     multivalued: true
     inlined: true
@@ -481,26 +454,27 @@ slots:
     description: Versions of build-time tools.
     from_schema: https://w3id.org/monarch/kozahub-metadata
     slot_uri: kozahub_metadata_schema:tools
-    owner: ReleaseMetadata
+    owner: Release
     domain_of:
     - Release
-    - ReleaseMetadata
     range: ToolVersions
     inlined: true
     inlined_as_list: true
   id:
     name: id
     definition_uri: https://w3id.org/monarch/kozahub-metadata/id
-    description: A CURIE or URI identifier.
+    description: "A CURIE or URI identifier for this Release \u2014 the kozahub repo\
+      \ name for an ingest build (e.g. \"hgnc-ingest\"), an INFORES CURIE for a leaf\
+      \ upstream (e.g. \"infores:hgnc\"), or a build name for a composite (e.g. \"\
+      monarch-kg\", \"kg-phenio\")."
     from_schema: https://w3id.org/monarch/kozahub-metadata
     mappings:
     - schema:identifier
     slot_uri: schema:identifier
     identifier: true
-    owner: SourceVersion
+    owner: Release
     domain_of:
     - Release
-    - SourceVersion
     range: uriorcurie
     required: true
   name:
@@ -511,63 +485,62 @@ slots:
     mappings:
     - schema:name
     slot_uri: schema:name
-    owner: SourceVersion
+    owner: Release
     domain_of:
     - Release
-    - SourceVersion
     range: string
   urls:
     name: urls
     definition_uri: https://w3id.org/monarch/kozahub-metadata/urls
     description: One or more URLs from which this source was fetched. Multi-file releases
       (e.g. Alliance, STRING, BGee with per-species files) should list every URL retrieved
-      under a single SourceVersion sharing one logical version.
+      under a single Release sharing one logical version.
     from_schema: https://w3id.org/monarch/kozahub-metadata
     mappings:
     - schema:url
     slot_uri: schema:url
-    owner: SourceVersion
+    owner: Release
     domain_of:
     - Release
-    - SourceVersion
     range: uri
     multivalued: true
   version:
     name: version
     definition_uri: https://w3id.org/monarch/kozahub-metadata/version
-    description: A version label as reported by the source.
+    description: "The version of this Release as reported by its source \u2014 an\
+      \ upstream data version for a leaf, the source data version for a per-ingest\
+      \ build, or a composite cache key for a composite build."
     from_schema: https://w3id.org/monarch/kozahub-metadata
     mappings:
     - schema:version
     slot_uri: schema:version
-    owner: SourceVersion
+    owner: Release
     domain_of:
     - Release
-    - SourceVersion
     range: string
   version_method:
     name: version_method
     definition_uri: https://w3id.org/monarch/kozahub-metadata/version_method
     description: "How the version was determined \u2014 an audit trail. Examples include\
       \ \"url_path\", \"http_last_modified\", \"github_release_api\", \"gaf_header\"\
-      , \"rest_info_api\", \"github_branch_head\"."
+      , \"rest_info_api\", \"github_branch_head\", \"owl_version_iri\"."
     from_schema: https://w3id.org/monarch/kozahub-metadata
     slot_uri: kozahub_metadata_schema:version_method
-    owner: SourceVersion
+    owner: Release
     domain_of:
     - Release
-    - SourceVersion
     range: string
   retrieved_at:
     name: retrieved_at
     definition_uri: https://w3id.org/monarch/kozahub-metadata/retrieved_at
-    description: Timestamp at which this source was retrieved.
+    description: Timestamp at which this Release was retrieved by its parent. Used
+      on nested Releases (i.e. members of a parent's `sources`); the outermost Release
+      uses `generated_at` instead.
     from_schema: https://w3id.org/monarch/kozahub-metadata
     slot_uri: kozahub_metadata_schema:retrieved_at
-    owner: SourceVersion
+    owner: Release
     domain_of:
     - Release
-    - SourceVersion
     range: datetime
   path:
     name: path
@@ -635,125 +608,6 @@ slots:
     domain_of:
     - ToolVersions
     range: string
-  Release_id:
-    name: Release_id
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/id
-    description: A CURIE or URI identifier.
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:identifier
-    is_a: id
-    domain: Release
-    slot_uri: schema:identifier
-    identifier: true
-    alias: id
-    owner: Release
-    domain_of:
-    - Release
-    is_usage_slot: true
-    usage_slot_name: id
-    range: uriorcurie
-    required: true
-  Release_sources:
-    name: Release_sources
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/sources
-    description: Upstream data sources consumed by this ingest.
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:isBasedOn
-    exact_mappings:
-    - schema:isBasedOn
-    close_mappings:
-    - prov:wasDerivedFrom
-    is_a: sources
-    domain: Release
-    slot_uri: schema:isBasedOn
-    alias: sources
-    owner: Release
-    domain_of:
-    - Release
-    is_usage_slot: true
-    usage_slot_name: sources
-    range: Release
-    multivalued: true
-    inlined: true
-    inlined_as_list: true
-  ReleaseMetadata_source:
-    name: ReleaseMetadata_source
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/source
-    description: "The ingest's identifier \u2014 typically the kozahub repo name."
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:name
-    is_a: source
-    domain: ReleaseMetadata
-    slot_uri: schema:name
-    alias: source
-    owner: ReleaseMetadata
-    domain_of:
-    - ReleaseMetadata
-    is_usage_slot: true
-    usage_slot_name: source
-    range: string
-    required: true
-  ReleaseMetadata_generated_at:
-    name: ReleaseMetadata_generated_at
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/generated_at
-    description: Timestamp at which this metadata record was emitted.
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:dateCreated
-    is_a: generated_at
-    domain: ReleaseMetadata
-    slot_uri: schema:dateCreated
-    alias: generated_at
-    owner: ReleaseMetadata
-    domain_of:
-    - ReleaseMetadata
-    is_usage_slot: true
-    usage_slot_name: generated_at
-    range: datetime
-    required: true
-  SourceVersion_id:
-    name: SourceVersion_id
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/id
-    description: INFORES CURIE identifying the source (e.g. "infores:hgnc").
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:identifier
-    is_a: id
-    domain: SourceVersion
-    slot_uri: schema:identifier
-    identifier: true
-    alias: id
-    owner: SourceVersion
-    domain_of:
-    - SourceVersion
-    is_usage_slot: true
-    usage_slot_name: id
-    range: uriorcurie
-    required: true
-  SourceVersion_urls:
-    name: SourceVersion_urls
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/urls
-    description: One or more URLs from which this source was fetched. Multi-file releases
-      (e.g. Alliance, STRING, BGee with per-species files) should list every URL retrieved
-      under a single SourceVersion sharing one logical version.
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:url
-    is_a: urls
-    domain: SourceVersion
-    slot_uri: schema:url
-    alias: urls
-    owner: SourceVersion
-    domain_of:
-    - SourceVersion
-    is_usage_slot: true
-    usage_slot_name: urls
-    range: uri
-    required: true
-    multivalued: true
   Artifact_path:
     name: Artifact_path
     definition_uri: https://w3id.org/monarch/kozahub-metadata/path
@@ -776,53 +630,14 @@ classes:
   Release:
     name: Release
     definition_uri: https://w3id.org/monarch/kozahub-metadata/Release
-    description: "A self-describing build receipt \u2014 the artifact of one ingest,\
-      \ merge, or composite build. Recursive: each `Release` may declare nested `sources`\
-      \ that are themselves `Release` records. A leaf source (an external dataset)\
-      \ is a `Release` with no nested `sources` and no `artifacts`/`tools`. A consumer\
-      \ build (e.g. monarch-kg) is a `Release` whose `sources` are the per-ingest\
-      \ builds it consumed.\nAggregators emitting this shape rename per-ingest fields\
-      \ when nesting: a per-ingest `release-metadata.yaml` (which uses `source`/`source_version`\
-      \ at the top level) becomes a nested `Release` with `id` set to the ingest name\
-      \ and `version` set to its `source_version`."
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:Dataset
-    close_mappings:
-    - cr:Dataset
-    - prov:Entity
-    slots:
-    - Release_id
-    - name
-    - version
-    - version_method
-    - retrieved_at
-    - urls
-    - build_version
-    - generated_at
-    - transform_version
-    - biolink_version
-    - Release_sources
-    - artifacts
-    - tools
-    slot_usage:
-      id:
-        name: id
-        required: true
-      sources:
-        name: sources
-        range: Release
-    class_uri: schema:Dataset
-  ReleaseMetadata:
-    name: ReleaseMetadata
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/ReleaseMetadata
-    description: 'Release-level metadata for a single kozahub ingest build. Captures
-      the upstream sources consumed, the artifacts produced, and the versions of the
-      source data, ingest code, and dependencies relevant to reproducibility.
-
-      Scope note: this schema describes the *release/build receipt* only. Per-output-file
-      content schemas (column-level / data-dictionary metadata derived from the produced
-      TSVs) are a separate concern and will live in a sibling schema if added.'
+    description: "A self-describing build receipt \u2014 fully recursive. The same\
+      \ shape represents a leaf upstream dataset, a per-ingest build, and a composite/aggregator\
+      \ build (e.g. kg-phenio, monarch-kg). A leaf upstream is a `Release` with no\
+      \ `sources` and no `artifacts`/`tools`; a per-ingest build is a `Release` whose\
+      \ `sources` are leaf upstreams; a composite is a `Release` whose `sources` are\
+      \ themselves per-ingest or composite `Release`s.\nConvention: set `generated_at`\
+      \ on the outermost (root) Release of an emitted document. Nested `Release`s\
+      \ use `retrieved_at` to record when the parent fetched them."
     from_schema: https://w3id.org/monarch/kozahub-metadata
     mappings:
     - schema:Dataset
@@ -832,74 +647,54 @@ classes:
     - cr:Dataset
     - prov:Entity
     slots:
-    - ReleaseMetadata_source
-    - source_version
+    - id
+    - name
+    - version
+    - version_method
+    - retrieved_at
+    - urls
+    - generated_at
     - transform_version
     - biolink_version
     - release_version
     - build_version
-    - ReleaseMetadata_generated_at
     - sources
     - mappings
     - artifacts
     - tools
-    slot_usage:
-      source:
-        name: source
-        required: true
-      generated_at:
-        name: generated_at
-        required: true
     class_uri: schema:Dataset
     tree_root: true
-  SourceVersion:
-    name: SourceVersion
-    definition_uri: https://w3id.org/monarch/kozahub-metadata/SourceVersion
-    description: An upstream data source consumed by this ingest, with the version
-      observed at retrieval time.
-    from_schema: https://w3id.org/monarch/kozahub-metadata
-    mappings:
-    - schema:Dataset
-    close_mappings:
-    - rig:SourceInformation
-    - prov:Entity
-    slots:
-    - SourceVersion_id
-    - name
-    - SourceVersion_urls
-    - version
-    - version_method
-    - retrieved_at
-    slot_usage:
-      id:
-        name: id
-        description: INFORES CURIE identifying the source (e.g. "infores:hgnc").
-        required: true
-      urls:
-        name: urls
-        required: true
-    class_uri: schema:Dataset
   MappingVersion:
     name: MappingVersion
     definition_uri: https://w3id.org/monarch/kozahub-metadata/MappingVersion
-    description: "A mapping file (typically SSSOM) consumed by this ingest. Distinct\
-      \ from a primary upstream `SourceVersion` because mapping versions have looser\
-      \ correctness implications \u2014 divergent mapping versions across contributing\
-      \ ingests are typically informational rather than build-breaking. Populated\
-      \ primarily by the merging layer (e.g. monarch-ingest) where mappings are applied\
-      \ to rewire IDs; individual ingests that consume mapping files for label-lookup\
-      \ or similar non-rewiring purposes generally need not populate this."
+    description: "A mapping file (typically SSSOM) consumed by this build. Distinct\
+      \ from a primary upstream `Release` listed in `sources` because mapping versions\
+      \ have looser correctness implications \u2014 divergent mapping versions across\
+      \ contributing ingests are typically informational rather than build-breaking.\
+      \ Populated primarily by the merging layer (e.g. monarch-ingest) where mappings\
+      \ are applied to rewire IDs; individual ingests that consume mapping files for\
+      \ label-lookup or similar non-rewiring purposes generally need not populate\
+      \ this."
     from_schema: https://w3id.org/monarch/kozahub-metadata
     close_mappings:
     - SSSOM:MappingSet
-    is_a: SourceVersion
+    is_a: Release
     slots:
-    - SourceVersion_id
+    - id
     - name
-    - SourceVersion_urls
     - version
     - version_method
     - retrieved_at
+    - urls
+    - generated_at
+    - transform_version
+    - biolink_version
+    - release_version
+    - build_version
+    - sources
+    - mappings
+    - artifacts
+    - tools
     - mapping_set_id
     - license
     class_uri: kozahub_metadata_schema:MappingVersion
@@ -937,7 +732,7 @@ classes:
     class_uri: kozahub_metadata_schema:ToolVersions
 metamodel_version: 1.7.0
 source_file: kozahub_metadata_schema.yaml
-source_file_date: '2026-05-05T05:54:58'
-source_file_size: 9154
-generation_date: '2026-05-05T05:55:10'
+source_file_date: '2026-05-07T03:45:32'
+source_file_size: 8014
+generation_date: '2026-05-07T03:45:44'
 
